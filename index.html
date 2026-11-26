@@ -1,0 +1,583 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restaurant POS Pro</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f1f5f9;color:#172033}
+header{background:#14243a;color:white;padding:20px;display:flex;justify-content:space-between;align-items:center}
+header h1{margin:0;font-size:23px}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:15px;background:white}
+button{border:0;padding:11px 16px;border-radius:7px;background:#2563eb;color:white;cursor:pointer}
+button:hover{opacity:.85}
+.secondary{background:#64748b}
+.danger{background:#dc2626}
+main{max-width:1250px;margin:20px auto;padding:0 15px}
+.panel{background:white;padding:20px;border-radius:12px;margin-bottom:18px;box-shadow:0 2px 8px #0000000a}
+h2{font-size:19px;margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+label{display:block;font-size:13px;color:#64748b;margin-bottom:5px}
+input,select{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:7px;margin-bottom:12px}
+.layout{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.products{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.product{background:#f8fafc;color:#172033;border:1px solid #e2e8f0;text-align:left}
+.product strong{display:block;margin-bottom:8px}
+.product span{color:#15803d;font-weight:bold}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left}
+.total{text-align:right;font-size:20px;font-weight:bold;margin:15px 0}
+.hidden{display:none}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.ticket{max-width:380px;margin:auto;font-size:13px;color:#111}
+.ticket h2{text-align:center}
+.ticket table{font-size:12px}
+.stat{background:#eff6ff;padding:18px;border-radius:8px}
+.stat b{font-size:22px;display:block;margin-top:8px}
+@media(max-width:750px){.layout,.grid{grid-template-columns:1fr}header{flex-wrap:wrap}}
+@media print{
+body{background:white}
+header,nav,main>.no-print{display:none!important}
+#printArea{display:block!important;box-shadow:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+<div>
+<h1>Restaurant POS Pro</h1>
+<small>Professional Restaurant Management</small>
+</div>
+<div>Version 1.0 PRO</div>
+</header>
+
+<nav class="no-print">
+<button onclick="tab('sale')">Caisse</button>
+<button class="secondary" onclick="tab('restaurants')">Restaurants</button>
+<button class="secondary" onclick="tab('products')">Produits</button>
+<button class="secondary" onclick="tab('history')">Historique</button>
+<button class="secondary" onclick="tab('stats')">Statistiques</button>
+<button class="secondary" onclick="tab('settings')">Paramètres</button>
+</nav>
+
+<main>
+
+<!-- CAISSE -->
+<section id="sale" class="page">
+<div class="panel no-print">
+<h2>Nouvelle vente</h2>
+<div class="grid">
+<div>
+<label>Restaurant</label>
+<select id="activeRestaurant" onchange="renderSale()"></select>
+</div>
+<div>
+<label>Nom du serveur</label>
+<input id="server" placeholder="Nom du serveur">
+</div>
+<div>
+<label>Date du ticket</label>
+<input type="date" id="saleDate">
+</div>
+<div>
+<label>Heure du ticket</label>
+<input type="time" id="saleTime">
+</div>
+</div>
+<label>Nom du client</label>
+<input id="customer" placeholder="Client facultatif">
+</div>
+
+<div class="layout no-print">
+<div class="panel">
+<h2>Menu des produits</h2>
+<div id="productButtons" class="products"></div>
+</div>
+
+<div class="panel">
+<h2>Ticket en cours</h2>
+<div id="cart"></div>
+<div class="total" id="total">Total TTC : 0,00 DH</div>
+<div class="actions">
+<button onclick="checkout()">Valider et imprimer</button>
+<button class="danger" onclick="clearCart()">Vider</button>
+</div>
+</div>
+</div>
+
+<div id="printArea" class="panel hidden"></div>
+</section>
+
+<!-- RESTAURANTS -->
+<section id="restaurants" class="page hidden">
+<div class="panel">
+<h2>Créer / Modifier un restaurant</h2>
+<input type="hidden" id="restaurantId">
+
+<label>Nom du restaurant</label>
+<input id="rName" placeholder="Nom du restaurant">
+
+<label>Adresse</label>
+<input id="rAddress">
+
+<div class="grid">
+<div><label>Téléphone 1</label><input id="rPhone"></div>
+<div><label>Téléphone 2</label><input id="rPhone2"></div>
+</div>
+
+<label>Nom du serveur par défaut</label>
+<input id="rServer">
+
+<label>Logo du restaurant</label>
+<input type="file" id="rLogo" accept="image/*">
+
+<label>Modèle du ticket</label>
+<select id="rTemplate">
+<option value="classic">Classique</option>
+<option value="detailed">Détaillé</option>
+<option value="compact">Compact</option>
+<option value="modern">Moderne</option>
+</select>
+
+<div class="actions">
+<button onclick="saveRestaurant()">Enregistrer</button>
+<button class="secondary" onclick="resetRestaurant()">Nouveau</button>
+</div>
+</div>
+<div class="panel">
+<h2>Liste des restaurants</h2>
+<div id="restaurantList"></div>
+</div>
+</section>
+
+<!-- PRODUITS -->
+<section id="products" class="page hidden">
+<div class="panel">
+<h2>Ajouter un produit</h2>
+<label>Nom du produit</label>
+<input id="pName">
+<label>Catégorie</label>
+<input id="pCategory" placeholder="Boissons, plats...">
+<label>Prix TTC (DH)</label>
+<input type="number" id="pPrice" min="0" step=".01">
+<button onclick="addProduct()">Ajouter le produit</button>
+</div>
+<div class="panel">
+<h2>Catalogue et prix par restaurant</h2>
+<div id="productList"></div>
+</div>
+</section>
+
+<!-- HISTORIQUE -->
+<section id="history" class="page hidden">
+<div class="panel">
+<h2>Historique des tickets</h2>
+<div id="historyList"></div>
+</div>
+</section>
+
+<!-- STATISTIQUES -->
+<section id="stats" class="page hidden">
+<div class="panel">
+<h2>Tableau de bord</h2>
+<div id="statistics" class="grid"></div>
+<div id="restaurantStats"></div>
+</div>
+</section>
+
+<!-- PARAMETRES -->
+<section id="settings" class="page hidden">
+<div class="panel">
+<h2>Gestion des données</h2>
+<p>Exporter une sauvegarde de votre système POS.</p>
+<button onclick="exportData()">Exporter JSON</button>
+<br><br>
+<label>Importer une sauvegarde</label>
+<input type="file" accept=".json" onchange="importData(event)">
+</div>
+<div class="panel">
+<h2>Stockage</h2>
+<p>Cette version utilise le stockage local du navigateur.</p>
+<p>Pour une utilisation professionnelle multi-appareils, une connexion à Supabase avec authentification et règles de sécurité sera nécessaire.</p>
+</div>
+</section>
+</main>
+
+<script>
+const VAT=20;
+const money=n=>(Number(n)||0).toFixed(2)+" DH";
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+let db=JSON.parse(localStorage.getItem("restaurantPOS"))||{
+restaurants:[],
+products:[],
+tickets:[]
+};
+let cart=[];
+
+function persist(){
+localStorage.setItem("restaurantPOS",JSON.stringify(db));
+renderAll();
+}
+
+function active(){
+return db.restaurants.find(r=>r.id===document.getElementById("activeRestaurant").value)||db.restaurants[0];
+}
+
+function tab(id){
+document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
+renderAll();
+}
+
+function init(){
+if(!db.restaurants.length){
+db.restaurants.push({
+id:uid(),name:"Mon restaurant",address:"",
+phone:"",phone2:"",server:"",logo:"",
+template:"classic",prices:{}
+});
+db.products=[
+{id:uid(),name:"Café",category:"Boissons",price:10},
+{id:uid(),name:"Eau",category:"Boissons",price:8},
+{id:uid(),name:"Plat du jour",category:"Plats",price:45}
+];
+}
+const now=new Date();
+document.getElementById("saleDate").value=now.toLocaleDateString("en-CA");
+document.getElementById("saleTime").value=now.toTimeString().slice(0,5);
+persist();
+}
+
+function renderAll(){
+renderRestaurantSelect();
+renderRestaurants();
+renderSale();
+renderProductList();
+renderHistory();
+renderStats();
+}
+
+function renderRestaurantSelect(){
+let s=document.getElementById("activeRestaurant");
+let old=s.value;
+s.innerHTML=db.restaurants.map(r=>
+`<option value="${r.id}">${esc(r.name)}</option>`
+).join("");
+if(db.restaurants.some(r=>r.id===old))s.value=old;
+}
+
+function renderSale(){
+let r=active();
+if(!r)return;
+document.getElementById("productButtons").innerHTML=
+db.products.map(p=>`
+<button class="product" onclick="addToCart('${p.id}')">
+<strong>${esc(p.name)}</strong>
+<span>${money(r.prices?.[p.id]??p.price)}</span>
+<small>${esc(p.category)}</small>
+</button>`).join("");
+
+document.getElementById("server").value=
+document.getElementById("server").value||r.server||"";
+
+renderCart();
+}
+
+function addToCart(id){
+let p=db.products.find(x=>x.id===id);
+let r=active();
+if(!p||!r)return;
+let item=cart.find(x=>x.productId===id);
+if(item)item.qty++;
+else cart.push({
+productId:id,
+name:p.name,
+price:Number(r.prices?.[id]??p.price),
+qty:1
+});
+renderCart();
+}
+
+function renderCart(){
+let total=cart.reduce((s,x)=>s+x.price*x.qty,0);
+let vat=total*VAT/(100+VAT);
+
+document.getElementById("cart").innerHTML=cart.length?
+`<table>
+<tr><th>Produit</th><th>Qté</th><th>Prix TTC</th><th></th></tr>
+${cart.map((x,i)=>`
+<tr>
+<td>${esc(x.name)}</td>
+<td><input style="width:65px" type="number" min="1" value="${x.qty}" onchange="cart[${i}].qty=Math.max(1,+this.value);renderCart()"></td>
+<td>${money(x.price)}</td>
+<td><button class="danger" onclick="cart.splice(${i},1);renderCart()">×</button></td>
+</tr>`).join("")}
+</table>
+<p>HT : ${money(total-vat)}</p>
+<p>TVA 20% incluse : ${money(vat)}</p>`:
+"<p>Votre panier est vide.</p>";
+
+document.getElementById("total").textContent="Total TTC : "+money(total);
+}
+
+function clearCart(){
+cart=[];
+renderCart();
+}
+
+function checkout(){
+if(!cart.length)return alert("Panier vide !");
+let r=active();
+let total=cart.reduce((s,x)=>s+x.price*x.qty,0);
+
+let ticket={
+id:uid(),
+number:"T"+Date.now().toString().slice(-8),
+restaurantId:r.id,
+restaurantName:r.name,
+date:document.getElementById("saleDate").value,
+time:document.getElementById("saleTime").value,
+server:document.getElementById("server").value,
+customer:document.getElementById("customer").value,
+items:cart.map(x=>({...x})),
+total,
+vat:total*VAT/(100+VAT)
+};
+
+db.tickets.unshift(ticket);
+persist();
+printTicket(ticket);
+clearCart();
+document.getElementById("customer").value="";
+}
+
+function printTicket(t){
+let r=db.restaurants.find(x=>x.id===t.restaurantId)||{};
+let rows=t.items.map(x=>`
+<tr><td>${esc(x.name)}<br>${x.qty} × ${money(x.price)}</td>
+<td style="text-align:right">${money(x.qty*x.price)}</td></tr>
+`).join("");
+
+let area=document.getElementById("printArea");
+area.classList.remove("hidden");
+area.innerHTML=`
+<div class="ticket">
+<div style="text-align:center">
+${r.logo?`<img src="${r.logo}" style="max-width:100px;max-height:75px">`:""}
+<h2>${esc(r.name)}</h2>
+<p>${esc(r.address)}</p>
+<p>${esc(r.phone)} ${esc(r.phone2)}</p>
+</div>
+<hr>
+<p>Ticket : ${t.number}</p>
+<p>Date : ${t.date} – ${t.time}</p>
+<p>Serveur : ${esc(t.server)}</p>
+${t.customer?`<p>Client : ${esc(t.customer)}</p>`:""}
+<hr>
+<table>${rows}</table>
+<hr>
+<p style="text-align:right">
+Total TTC : <b>${money(t.total)}</b><br>
+TVA 20% incluse : ${money(t.vat)}<br>
+HT : ${money(t.total-t.vat)}
+</p>
+<p style="text-align:center">Merci de votre visite !</p>
+</div>`;
+window.print();
+area.classList.add("hidden");
+}
+
+function saveRestaurant(){
+let id=document.getElementById("restaurantId").value||uid();
+let name=document.getElementById("rName").value.trim();
+if(!name)return alert("Saisissez le nom du restaurant.");
+
+let old=db.restaurants.find(r=>r.id===id)||{prices:{}};
+let file=document.getElementById("rLogo").files[0];
+
+function finish(logo){
+let r={
+...old,id,name,
+address:document.getElementById("rAddress").value,
+phone:document.getElementById("rPhone").value,
+phone2:document.getElementById("rPhone2").value,
+server:document.getElementById("rServer").value,
+template:document.getElementById("rTemplate").value,
+logo
+};
+let index=db.restaurants.findIndex(x=>x.id===id);
+if(index<0)db.restaurants.push(r);
+else db.restaurants[index]=r;
+persist();
+resetRestaurant();
+}
+
+if(file){
+let reader=new FileReader();
+reader.onload=()=>finish(reader.result);
+reader.readAsDataURL(file);
+}else finish(old.logo||"");
+}
+
+function resetRestaurant(){
+["restaurantId","rName","rAddress","rPhone","rPhone2","rServer"].forEach(id=>{
+document.getElementById(id).value="";
+});
+document.getElementById("rLogo").value="";
+}
+
+function renderRestaurants(){
+document.getElementById("restaurantList").innerHTML=
+db.restaurants.map(r=>`
+<div style="padding:12px;border-bottom:1px solid #ddd">
+<b>${esc(r.name)}</b><br>${esc(r.address)}
+<div class="actions">
+<button class="secondary" onclick="editRestaurant('${r.id}')">Modifier</button>
+<button class="danger" onclick="deleteRestaurant('${r.id}')">Supprimer</button>
+</div>
+</div>`).join("");
+}
+
+function editRestaurant(id){
+let r=db.restaurants.find(x=>x.id===id);
+if(!r)return;
+document.getElementById("restaurantId").value=id;
+document.getElementById("rName").value=r.name;
+document.getElementById("rAddress").value=r.address;
+document.getElementById("rPhone").value=r.phone;
+document.getElementById("rPhone2").value=r.phone2;
+document.getElementById("rServer").value=r.server;
+document.getElementById("rTemplate").value=r.template;
+tab("restaurants");
+}
+
+function deleteRestaurant(id){
+if(db.restaurants.length<=1)return alert("Il faut garder au moins un restaurant.");
+if(confirm("Supprimer ce restaurant ?")){
+db.restaurants=db.restaurants.filter(r=>r.id!==id);
+persist();
+}
+}
+
+function addProduct(){
+let name=document.getElementById("pName").value.trim();
+let price=Number(document.getElementById("pPrice").value);
+if(!name||document.getElementById("pPrice").value==="")return alert("Nom et prix obligatoires.");
+db.products.push({
+id:uid(),
+name,
+category:document.getElementById("pCategory").value,
+price
+});
+document.getElementById("pName").value="";
+document.getElementById("pCategory").value="";
+document.getElementById("pPrice").value="";
+persist();
+}
+
+function renderProductList(){
+document.getElementById("productList").innerHTML=db.products.length?
+`<table>
+<tr><th>Produit</th><th>Catégorie</th><th>Prix défaut</th>
+${db.restaurants.map(r=>`<th>${esc(r.name)}</th>`).join("")}<th></th></tr>
+${db.products.map(p=>`
+<tr>
+<td>${esc(p.name)}</td><td>${esc(p.category)}</td><td>${money(p.price)}</td>
+${db.restaurants.map(r=>`
+<td><input style="width:90px" type="number" min="0" step=".01"
+value="${r.prices?.[p.id]??""}" placeholder="${p.price}"
+onchange="setPrice('${r.id}','${p.id}',this.value)"></td>`).join("")}
+<td><button class="danger" onclick="deleteProduct('${p.id}')">×</button></td>
+</tr>`).join("")}
+</table>`:"Aucun produit.";
+}
+
+function setPrice(rid,pid,value){
+let r=db.restaurants.find(x=>x.id===rid);
+r.prices=r.prices||{};
+if(value==="")delete r.prices[pid];
+else r.prices[pid]=Number(value);
+persist();
+}
+
+function deleteProduct(id){
+if(confirm("Supprimer ce produit ?")){
+db.products=db.products.filter(p=>p.id!==id);
+db.restaurants.forEach(r=>{if(r.prices)delete r.prices[id]});
+persist();
+}
+}
+
+function renderHistory(){
+document.getElementById("historyList").innerHTML=db.tickets.length?
+`<table>
+<tr><th>Ticket</th><th>Restaurant</th><th>Date</th><th>Total</th><th></th></tr>
+${db.tickets.map(t=>`
+<tr>
+<td>${t.number}</td><td>${esc(t.restaurantName)}</td>
+<td>${t.date} ${t.time}</td><td>${money(t.total)}</td>
+<td><button class="secondary" onclick="reprint('${t.id}')">Imprimer</button>
+<button class="danger" onclick="deleteTicket('${t.id}')">×</button></td>
+</tr>`).join("")}
+</table>`:"Aucun ticket.";
+}
+
+function reprint(id){
+let t=db.tickets.find(x=>x.id===id);
+if(t)printTicket(t);
+}
+
+function deleteTicket(id){
+if(confirm("Supprimer ce ticket ?")){
+db.tickets=db.tickets.filter(t=>t.id!==id);
+persist();
+}
+}
+
+function renderStats(){
+let total=db.tickets.reduce((s,t)=>s+t.total,0);
+let vat=total*VAT/(100+VAT);
+document.getElementById("statistics").innerHTML=`
+<div class="stat">Nombre de tickets<b>${db.tickets.length}</b></div>
+<div class="stat">CA TTC<b>${money(total)}</b></div>
+<div class="stat">TVA incluse<b>${money(vat)}</b></div>`;
+document.getElementById("restaurantStats").innerHTML=
+db.restaurants.map(r=>{
+let ts=db.tickets.filter(t=>t.restaurantId===r.id);
+return `<p>${esc(r.name)} : <b>${money(ts.reduce((s,t)=>s+t.total,0))}</b></p>`;
+}).join("");
+}
+
+function exportData(){
+let a=document.createElement("a");
+a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:"application/json"}));
+a.download="restaurant-pos-backup.json";
+a.click();
+URL.revokeObjectURL(a.href);
+}
+
+function importData(event){
+let file=event.target.files[0];
+if(!file)return;
+let reader=new FileReader();
+reader.onload=()=>{
+try{
+let d=JSON.parse(reader.result);
+if(!d.restaurants||!d.products||!d.tickets)throw Error();
+db=d;
+persist();
+alert("Importation réussie.");
+}catch(e){alert("Fichier invalide.");}
+};
+reader.readAsText(file);
+}
+
+init();
+</script>
+</body>
+</html>
