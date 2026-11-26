@@ -3,7 +3,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Restaurant POS Pro</title>
 <style>
 *{box-sizing:border-box}
@@ -16,7 +16,7 @@ button:hover{opacity:.85}
 .secondary{background:#64748b}
 .danger{background:#dc2626}
 main{max-width:1250px;margin:20px auto;padding:0 15px}
-.panel{background:white;padding:20px;border-radius:12px;margin-bottom:18px;box-shadow:0 2px 8px #0000000a}
+.panel{background:white;padding:20px;border-radius:12px;margin-bottom:18px;box-shadow:0 2px 8px #0001}
 h2{font-size:19px;margin-top:0}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 label{display:block;font-size:13px;color:#64748b;margin-bottom:5px}
@@ -65,27 +65,14 @@ header,nav,main>.no-print{display:none!important}
 
 <main>
 
-<!-- CAISSE -->
 <section id="sale" class="page">
 <div class="panel no-print">
 <h2>Nouvelle vente</h2>
 <div class="grid">
-<div>
-<label>Restaurant</label>
-<select id="activeRestaurant" onchange="renderSale()"></select>
-</div>
-<div>
-<label>Nom du serveur</label>
-<input id="server" placeholder="Nom du serveur">
-</div>
-<div>
-<label>Date du ticket</label>
-<input type="date" id="saleDate">
-</div>
-<div>
-<label>Heure du ticket</label>
-<input type="time" id="saleTime">
-</div>
+<div><label>Restaurant</label><select id="activeRestaurant" onchange="renderSale()"></select></div>
+<div><label>Nom du serveur</label><input id="server" placeholder="Nom du serveur"></div>
+<div><label>Date du ticket</label><input type="date" id="saleDate"></div>
+<div><label>Heure du ticket</label><input type="time" id="saleTime"></div>
 </div>
 <label>Nom du client</label>
 <input id="customer" placeholder="Client facultatif">
@@ -96,7 +83,6 @@ header,nav,main>.no-print{display:none!important}
 <h2>Menu des produits</h2>
 <div id="productButtons" class="products"></div>
 </div>
-
 <div class="panel">
 <h2>Ticket en cours</h2>
 <div id="cart"></div>
@@ -107,33 +93,21 @@ header,nav,main>.no-print{display:none!important}
 </div>
 </div>
 </div>
-
 <div id="printArea" class="panel hidden"></div>
 </section>
 
-<!-- RESTAURANTS -->
 <section id="restaurants" class="page hidden">
 <div class="panel">
 <h2>Créer / Modifier un restaurant</h2>
 <input type="hidden" id="restaurantId">
-
-<label>Nom du restaurant</label>
-<input id="rName" placeholder="Nom du restaurant">
-
-<label>Adresse</label>
-<input id="rAddress">
-
+<label>Nom du restaurant</label><input id="rName" placeholder="Nom du restaurant">
+<label>Adresse</label><input id="rAddress">
 <div class="grid">
 <div><label>Téléphone 1</label><input id="rPhone"></div>
 <div><label>Téléphone 2</label><input id="rPhone2"></div>
 </div>
-
-<label>Nom du serveur par défaut</label>
-<input id="rServer">
-
-<label>Logo du restaurant</label>
-<input type="file" id="rLogo" accept="image/*">
-
+<label>Nom du serveur par défaut</label><input id="rServer">
+<label>Logo du restaurant</label><input type="file" id="rLogo" accept="image/*">
 <label>Modèle du ticket</label>
 <select id="rTemplate">
 <option value="classic">Classique</option>
@@ -141,45 +115,29 @@ header,nav,main>.no-print{display:none!important}
 <option value="compact">Compact</option>
 <option value="modern">Moderne</option>
 </select>
-
 <div class="actions">
 <button onclick="saveRestaurant()">Enregistrer</button>
 <button class="secondary" onclick="resetRestaurant()">Nouveau</button>
 </div>
 </div>
-<div class="panel">
-<h2>Liste des restaurants</h2>
-<div id="restaurantList"></div>
-</div>
+<div class="panel"><h2>Liste des restaurants</h2><div id="restaurantList"></div></div>
 </section>
 
-<!-- PRODUITS -->
 <section id="products" class="page hidden">
 <div class="panel">
 <h2>Ajouter un produit</h2>
-<label>Nom du produit</label>
-<input id="pName">
-<label>Catégorie</label>
-<input id="pCategory" placeholder="Boissons, plats...">
-<label>Prix TTC (DH)</label>
-<input type="number" id="pPrice" min="0" step=".01">
+<label>Nom du produit</label><input id="pName">
+<label>Catégorie</label><input id="pCategory" placeholder="Boissons, plats...">
+<label>Prix TTC (DH)</label><input type="number" id="pPrice" min="0" step=".01">
 <button onclick="addProduct()">Ajouter le produit</button>
 </div>
-<div class="panel">
-<h2>Catalogue et prix par restaurant</h2>
-<div id="productList"></div>
-</div>
+<div class="panel"><h2>Catalogue et prix par restaurant</h2><div id="productList"></div></div>
 </section>
 
-<!-- HISTORIQUE -->
 <section id="history" class="page hidden">
-<div class="panel">
-<h2>Historique des tickets</h2>
-<div id="historyList"></div>
-</div>
+<div class="panel"><h2>Historique des tickets</h2><div id="historyList"></div></div>
 </section>
 
-<!-- STATISTIQUES -->
 <section id="stats" class="page hidden">
 <div class="panel">
 <h2>Tableau de bord</h2>
@@ -188,11 +146,10 @@ header,nav,main>.no-print{display:none!important}
 </div>
 </section>
 
-<!-- PARAMETRES -->
 <section id="settings" class="page hidden">
 <div class="panel">
 <h2>Gestion des données</h2>
-<p>Exporter une sauvegarde de votre système POS.</p>
+<p>Exporter une sauvegarde du système POS.</p>
 <button onclick="exportData()">Exporter JSON</button>
 <br><br>
 <label>Importer une sauvegarde</label>
@@ -201,7 +158,7 @@ header,nav,main>.no-print{display:none!important}
 <div class="panel">
 <h2>Stockage</h2>
 <p>Cette version utilise le stockage local du navigateur.</p>
-<p>Pour une utilisation professionnelle multi-appareils, une connexion à Supabase avec authentification et règles de sécurité sera nécessaire.</p>
+<p>La synchronisation entre plusieurs appareils nécessitera une base de données en ligne et une authentification.</p>
 </div>
 </section>
 </main>
@@ -213,9 +170,7 @@ const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
 let db=JSON.parse(localStorage.getItem("restaurantPOS"))||{
-restaurants:[],
-products:[],
-tickets:[]
+restaurants:[],products:[],tickets:[]
 };
 let cart=[];
 
@@ -281,10 +236,8 @@ db.products.map(p=>`
 <span>${money(r.prices?.[p.id]??p.price)}</span>
 <small>${esc(p.category)}</small>
 </button>`).join("");
-
 document.getElementById("server").value=
 document.getElementById("server").value||r.server||"";
-
 renderCart();
 }
 
@@ -295,10 +248,8 @@ if(!p||!r)return;
 let item=cart.find(x=>x.productId===id);
 if(item)item.qty++;
 else cart.push({
-productId:id,
-name:p.name,
-price:Number(r.prices?.[id]??p.price),
-qty:1
+productId:id,name:p.name,
+price:Number(r.prices?.[id]??p.price),qty:1
 });
 renderCart();
 }
@@ -306,7 +257,6 @@ renderCart();
 function renderCart(){
 let total=cart.reduce((s,x)=>s+x.price*x.qty,0);
 let vat=total*VAT/(100+VAT);
-
 document.getElementById("cart").innerHTML=cart.length?
 `<table>
 <tr><th>Produit</th><th>Qté</th><th>Prix TTC</th><th></th></tr>
@@ -321,34 +271,25 @@ ${cart.map((x,i)=>`
 <p>HT : ${money(total-vat)}</p>
 <p>TVA 20% incluse : ${money(vat)}</p>`:
 "<p>Votre panier est vide.</p>";
-
 document.getElementById("total").textContent="Total TTC : "+money(total);
 }
 
-function clearCart(){
-cart=[];
-renderCart();
-}
+function clearCart(){cart=[];renderCart();}
 
 function checkout(){
 if(!cart.length)return alert("Panier vide !");
 let r=active();
 let total=cart.reduce((s,x)=>s+x.price*x.qty,0);
-
 let ticket={
-id:uid(),
-number:"T"+Date.now().toString().slice(-8),
-restaurantId:r.id,
-restaurantName:r.name,
+id:uid(),number:"T"+Date.now().toString().slice(-8),
+restaurantId:r.id,restaurantName:r.name,
 date:document.getElementById("saleDate").value,
 time:document.getElementById("saleTime").value,
 server:document.getElementById("server").value,
 customer:document.getElementById("customer").value,
-items:cart.map(x=>({...x})),
-total,
+items:cart.map(x=>({...x})),total,
 vat:total*VAT/(100+VAT)
 };
-
 db.tickets.unshift(ticket);
 persist();
 printTicket(ticket);
@@ -360,9 +301,7 @@ function printTicket(t){
 let r=db.restaurants.find(x=>x.id===t.restaurantId)||{};
 let rows=t.items.map(x=>`
 <tr><td>${esc(x.name)}<br>${x.qty} × ${money(x.price)}</td>
-<td style="text-align:right">${money(x.qty*x.price)}</td></tr>
-`).join("");
-
+<td style="text-align:right">${money(x.qty*x.price)}</td></tr>`).join("");
 let area=document.getElementById("printArea");
 area.classList.remove("hidden");
 area.innerHTML=`
@@ -378,9 +317,7 @@ ${r.logo?`<img src="${r.logo}" style="max-width:100px;max-height:75px">`:""}
 <p>Date : ${t.date} – ${t.time}</p>
 <p>Serveur : ${esc(t.server)}</p>
 ${t.customer?`<p>Client : ${esc(t.customer)}</p>`:""}
-<hr>
-<table>${rows}</table>
-<hr>
+<hr><table>${rows}</table><hr>
 <p style="text-align:right">
 Total TTC : <b>${money(t.total)}</b><br>
 TVA 20% incluse : ${money(t.vat)}<br>
@@ -396,10 +333,8 @@ function saveRestaurant(){
 let id=document.getElementById("restaurantId").value||uid();
 let name=document.getElementById("rName").value.trim();
 if(!name)return alert("Saisissez le nom du restaurant.");
-
 let old=db.restaurants.find(r=>r.id===id)||{prices:{}};
 let file=document.getElementById("rLogo").files[0];
-
 function finish(logo){
 let r={
 ...old,id,name,
@@ -407,16 +342,13 @@ address:document.getElementById("rAddress").value,
 phone:document.getElementById("rPhone").value,
 phone2:document.getElementById("rPhone2").value,
 server:document.getElementById("rServer").value,
-template:document.getElementById("rTemplate").value,
-logo
+template:document.getElementById("rTemplate").value,logo
 };
 let index=db.restaurants.findIndex(x=>x.id===id);
 if(index<0)db.restaurants.push(r);
 else db.restaurants[index]=r;
-persist();
-resetRestaurant();
+persist();resetRestaurant();
 }
-
 if(file){
 let reader=new FileReader();
 reader.onload=()=>finish(reader.result);
@@ -425,9 +357,7 @@ reader.readAsDataURL(file);
 }
 
 function resetRestaurant(){
-["restaurantId","rName","rAddress","rPhone","rPhone2","rServer"].forEach(id=>{
-document.getElementById(id).value="";
-});
+["restaurantId","rName","rAddress","rPhone","rPhone2","rServer"].forEach(id=>document.getElementById(id).value="");
 document.getElementById("rLogo").value="";
 }
 
@@ -439,8 +369,7 @@ db.restaurants.map(r=>`
 <div class="actions">
 <button class="secondary" onclick="editRestaurant('${r.id}')">Modifier</button>
 <button class="danger" onclick="deleteRestaurant('${r.id}')">Supprimer</button>
-</div>
-</div>`).join("");
+</div></div>`).join("");
 }
 
 function editRestaurant(id){
@@ -457,7 +386,7 @@ tab("restaurants");
 }
 
 function deleteRestaurant(id){
-if(db.restaurants.length<=1)return alert("Il faut garder au moins un restaurant.");
+if(db.restaurants.length<=1)return alert("Gardez au moins un restaurant.");
 if(confirm("Supprimer ce restaurant ?")){
 db.restaurants=db.restaurants.filter(r=>r.id!==id);
 persist();
@@ -469,10 +398,8 @@ let name=document.getElementById("pName").value.trim();
 let price=Number(document.getElementById("pPrice").value);
 if(!name||document.getElementById("pPrice").value==="")return alert("Nom et prix obligatoires.");
 db.products.push({
-id:uid(),
-name,
-category:document.getElementById("pCategory").value,
-price
+id:uid(),name,
+category:document.getElementById("pCategory").value,price
 });
 document.getElementById("pName").value="";
 document.getElementById("pCategory").value="";
@@ -486,15 +413,13 @@ document.getElementById("productList").innerHTML=db.products.length?
 <tr><th>Produit</th><th>Catégorie</th><th>Prix défaut</th>
 ${db.restaurants.map(r=>`<th>${esc(r.name)}</th>`).join("")}<th></th></tr>
 ${db.products.map(p=>`
-<tr>
-<td>${esc(p.name)}</td><td>${esc(p.category)}</td><td>${money(p.price)}</td>
+<tr><td>${esc(p.name)}</td><td>${esc(p.category)}</td><td>${money(p.price)}</td>
 ${db.restaurants.map(r=>`
 <td><input style="width:90px" type="number" min="0" step=".01"
 value="${r.prices?.[p.id]??""}" placeholder="${p.price}"
 onchange="setPrice('${r.id}','${p.id}',this.value)"></td>`).join("")}
 <td><button class="danger" onclick="deleteProduct('${p.id}')">×</button></td>
-</tr>`).join("")}
-</table>`:"Aucun produit.";
+</tr>`).join("")}</table>`:"Aucun produit.";
 }
 
 function setPrice(rid,pid,value){
@@ -518,13 +443,11 @@ document.getElementById("historyList").innerHTML=db.tickets.length?
 `<table>
 <tr><th>Ticket</th><th>Restaurant</th><th>Date</th><th>Total</th><th></th></tr>
 ${db.tickets.map(t=>`
-<tr>
-<td>${t.number}</td><td>${esc(t.restaurantName)}</td>
+<tr><td>${t.number}</td><td>${esc(t.restaurantName)}</td>
 <td>${t.date} ${t.time}</td><td>${money(t.total)}</td>
 <td><button class="secondary" onclick="reprint('${t.id}')">Imprimer</button>
 <button class="danger" onclick="deleteTicket('${t.id}')">×</button></td>
-</tr>`).join("")}
-</table>`:"Aucun ticket.";
+</tr>`).join("")}</table>`:"Aucun ticket.";
 }
 
 function reprint(id){
@@ -569,9 +492,7 @@ reader.onload=()=>{
 try{
 let d=JSON.parse(reader.result);
 if(!d.restaurants||!d.products||!d.tickets)throw Error();
-db=d;
-persist();
-alert("Importation réussie.");
+db=d;persist();alert("Importation réussie.");
 }catch(e){alert("Fichier invalide.");}
 };
 reader.readAsText(file);
