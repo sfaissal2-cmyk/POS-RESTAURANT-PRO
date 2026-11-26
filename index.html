@@ -4,283 +4,597 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Restaurant POS Pro</title>
+<title>POS Restaurant Pro</title>
 <style>
-:root{--primary:#172554;--accent:#2563eb;--bg:#f1f5f9;--white:#fff;--text:#172033}
+:root{--primary:#172554;--accent:#f59e0b;--bg:#f3f5f9;--white:#fff;--text:#182033;--muted:#687386;--border:#e3e7ef;--green:#15803d;--red:#dc2626}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);font-family:Arial,sans-serif;color:var(--text)}
-header{background:var(--primary);color:white;padding:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-header h1{font-size:20px;margin:0}
-header select{padding:10px;border-radius:8px}
-nav{display:flex;gap:7px;flex-wrap:wrap;padding:12px;background:white;position:sticky;top:0;z-index:5;box-shadow:0 2px 5px #0001}
-button,.btn{border:0;border-radius:8px;padding:11px 14px;background:var(--accent);color:white;cursor:pointer;font-weight:bold}
-button.secondary{background:#64748b}
-button.danger{background:#dc2626}
-button:disabled{opacity:.5}
-nav button{background:#e2e8f0;color:#172033}
-nav button.active{background:var(--accent);color:white}
-main{padding:16px;max-width:1200px;margin:auto}
-.panel{background:white;padding:18px;border-radius:12px;margin-bottom:15px;box-shadow:0 2px 8px #0000000a}
-h2{font-size:19px;margin:0 0 15px}
-h3{font-size:16px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;border:0;border-radius:8px;padding:10px 14px;background:var(--primary);color:white}
+button.secondary{background:#e8edf5;color:#26334a}
+button.danger{background:var(--red)}
+button.success{background:var(--green)}
+button.small{padding:6px 9px;font-size:12px}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:white;color:var(--text)}
 label{display:block;font-size:13px;font-weight:bold;margin:10px 0 5px}
-input,select,textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;background:white;font-size:15px}
-input[type=checkbox]{width:auto}
-.product{border:1px solid #e2e8f0;padding:14px;border-radius:10px;background:white}
-.product strong{display:block;margin-bottom:8px}
-.price{color:#2563eb;font-weight:bold;font-size:18px}
-.pos-layout{display:grid;grid-template-columns:1.5fr 1fr;gap:15px}
-.cart-line{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid #e2e8f0;align-items:center}
-.cart-line button{padding:6px 9px}
-.total{font-size:20px;font-weight:bold}
-.small{font-size:12px;color:#64748b}
+.header{background:var(--primary);color:white;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.header h2{margin:0;font-size:20px}
+.header select{width:auto;min-width:170px}
+.layout{display:flex;min-height:calc(100vh - 60px)}
+.sidebar{width:205px;background:#101b3b;padding:15px 10px;flex-shrink:0}
+.sidebar button{width:100%;text-align:left;background:transparent;color:#dbe4ff;margin:3px 0}
+.sidebar button.active,.sidebar button:hover{background:#293b70;color:white}
+.main{padding:18px;flex:1;min-width:0}
+.page{display:none}.page.active{display:block}
+h2.page-title{margin:0 0 18px;font-size:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.card{background:white;border:1px solid var(--border);border-radius:12px;padding:15px;margin-bottom:14px}
+.stat{font-size:25px;font-weight:bold;margin-top:8px}
+.muted{color:var(--muted);font-size:13px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.form-grid .full{grid-column:1/-1}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row>*{flex:1}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.toolbar button{flex:0 0 auto}
+.category-list{display:flex;gap:7px;overflow-x:auto;margin:12px 0;padding-bottom:5px}
+.category-list button{white-space:nowrap;background:#e4e9f2;color:#29344b}
+.category-list button.active{background:var(--primary);color:white}
+.pos-layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:15px}
+.food-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:10px}
+.food-card{background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer}
+.food-card img{width:100%;height:90px;object-fit:cover;display:block;background:#edf0f4}
+.food-card .food-info{padding:9px}
+.food-card strong{font-size:14px;display:block}
+.food-card span{color:var(--green);font-weight:bold;font-size:13px}
+.cart{position:sticky;top:10px;align-self:start}
+.cart-line{display:flex;justify-content:space-between;gap:6px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.cart-line button{padding:3px 7px}
+.total-line{display:flex;justify-content:space-between;margin:9px 0}
+.total-line.grand{font-size:20px;font-weight:bold;border-top:1px solid var(--border);padding-top:12px}
+table{width:100%;border-collapse:collapse;background:white;font-size:13px}
+th,td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left}
+th{background:#f0f3f8}
+.table-wrap{overflow-x:auto;border-radius:10px}
+.badge{padding:4px 7px;border-radius:20px;background:#e5f5e9;color:#166534;font-size:11px}
 .hidden{display:none!important}
-.stat{background:#eff6ff;padding:15px;border-radius:10px}
-.stat strong{font-size:22px;display:block;margin-top:6px}
-table{width:100%;border-collapse:collapse;font-size:14px}
-td,th{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left}
-.actions{display:flex;gap:7px;flex-wrap:wrap}
-#receipt{max-width:420px;margin:20px auto;background:white;padding:22px;color:#111}
-#receipt img{max-width:100px;max-height:75px;object-fit:contain}
-.receipt-center{text-align:center}
-.receipt-row{display:flex;justify-content:space-between;padding:5px 0}
-hr{border:0;border-top:1px dashed #777;margin:12px 0}
-@media(max-width:700px){.pos-layout{grid-template-columns:1fr}main{padding:10px}.panel{padding:13px}header h1{font-size:17px}}
-@media print{body{background:white}body *{visibility:hidden}#receipt,#receipt *{visibility:visible}#receipt{position:absolute;left:0;top:0;width:100%;max-width:100%;margin:0;box-shadow:none}}
+.logo-preview{max-width:100px;max-height:70px;object-fit:contain}
+.notice{padding:10px;background:#fff7df;border-radius:8px;font-size:13px;margin:10px 0}
+hr{border:0;border-top:1px solid var(--border);margin:14px 0}
+@media(max-width:800px){
+ .layout{display:block}.sidebar{width:100%;display:flex;overflow-x:auto;padding:7px}
+ .sidebar button{width:auto;white-space:nowrap;font-size:12px;padding:9px}
+ .main{padding:12px}.pos-layout{grid-template-columns:1fr}
+ .cart{position:static}.form-grid{grid-template-columns:1fr}
+ .header h2{font-size:16px}
+}
+@media print{
+ body{background:white}.header,.sidebar,.no-print{display:none!important}
+ .main{padding:0}.page{display:none!important}#receiptPrint{display:block!important}
+}
 </style>
 </head>
 <body>
-<header>
-<h1>🍽️ RESTAURANT POS PRO</h1>
-<select id="restaurantSelect" onchange="changeRestaurant()"></select>
+
+<header class="header">
+  <h2>🍽️ POS RESTAURANT PRO</h2>
+  <div class="row" style="flex:0 1 auto">
+    <select id="restaurantSelector" onchange="changeRestaurant(this.value)"></select>
+    <button class="small" onclick="showPage('settings')">⚙️</button>
+  </div>
 </header>
-<nav>
-<button class="active" onclick="showPage('pos',this)">🧾 Caisse</button>
-<button onclick="showPage('products',this)">📦 Produits</button>
-<button onclick="showPage('restaurants',this)">🏪 Restaurants</button>
-<button onclick="showPage('history',this)">📊 Ventes</button>
-<button onclick="showPage('settings',this)">⚙️ Paramètres</button>
+
+<div class="layout">
+<nav class="sidebar no-print">
+  <button class="active" data-page="dashboard" onclick="showPage('dashboard')">📊 Tableau de bord</button>
+  <button data-page="pos" onclick="showPage('pos')">🛒 Caisse</button>
+  <button data-page="products" onclick="showPage('products')">🍔 Produits</button>
+  <button data-page="categories" onclick="showPage('categories')">📂 Catégories</button>
+  <button data-page="history" onclick="showPage('history')">🧾 Historique</button>
+  <button data-page="restaurants" onclick="showPage('restaurants')">🏪 Restaurants</button>
+  <button data-page="settings" onclick="showPage('settings')">⚙️ Paramètres</button>
+  <button onclick="exportData()">💾 Sauvegarde</button>
+  <button onclick="document.getElementById('restoreFile').click()">📥 Restaurer</button>
+  <input type="file" id="restoreFile" accept=".json" class="hidden" onchange="restoreData(event)">
 </nav>
-<main>
-<section id="page-pos">
-<div class="panel">
-<h2>Nouvelle vente</h2>
-<div class="grid">
-<div><label>Type de commande</label><select id="orderType"><option>Sur place</option><option>À emporter</option><option>Livraison</option></select></div>
-<div><label>Nom du serveur</label><input id="server" placeholder="Nom du serveur"></div>
-<div><label>Numéro de table</label><input id="tableNumber" placeholder="Table (facultatif)"></div>
-</div>
-</div>
-<div class="pos-layout">
-<div class="panel">
-<h2>Produits</h2>
-<input id="productSearch" placeholder="Rechercher un produit..." oninput="renderProducts()">
-<div id="productList" class="grid" style="margin-top:12px"></div>
-</div>
-<div class="panel">
-<h2>Panier</h2>
-<div id="cartList"><p class="small">Aucun produit sélectionné.</p></div>
-<hr>
-<div class="receipt-row"><span>Sous-total HT</span><strong id="subtotal">0,00 DH</strong></div>
-<div class="receipt-row"><span>TVA (<span id="vatLabel">20</span> %)</span><strong id="vatAmount">0,00 DH</strong></div>
-<div class="receipt-row total"><span>Total TTC</span><span id="grandTotal">0,00 DH</span></div>
-<label>Mode de paiement</label>
-<select id="payment"><option>Espèces</option><option>Carte bancaire</option><option>Virement</option><option>Autre</option></select>
-<button style="width:100%;margin-top:12px" onclick="completeSale()">Valider la vente</button>
-<button class="secondary" style="width:100%;margin-top:8px" onclick="clearCart()">Vider le panier</button>
-</div>
-</div>
+
+<main class="main">
+
+<section id="dashboard" class="page active">
+  <h2 class="page-title">Tableau de bord</h2>
+  <div class="grid">
+    <div class="card"><div class="muted">Chiffre d'affaires aujourd'hui</div><div class="stat" id="todayRevenue">0 DH</div></div>
+    <div class="card"><div class="muted">Nombre de tickets</div><div class="stat" id="todayCount">0</div></div>
+    <div class="card"><div class="muted">Total des ventes</div><div class="stat" id="allRevenue">0 DH</div></div>
+    <div class="card"><div class="muted">Nombre de produits</div><div class="stat" id="productCount">0</div></div>
+  </div>
+  <div class="card">
+    <h3>Dernières ventes</h3>
+    <div class="table-wrap"><table><thead><tr><th>Ticket</th><th>Date</th><th>Total TTC</th><th>Paiement</th></tr></thead><tbody id="recentSales"></tbody></table></div>
+  </div>
 </section>
 
-<section id="page-products" class="hidden">
-<div class="panel">
-<h2>Gestion des produits</h2>
-<div class="grid">
-<div><label>Nom du produit</label><input id="newProductName" placeholder="Ex : Pizza Margherita"></div>
-<div><label>Catégorie</label><input id="newProductCategory" placeholder="Ex : Pizza"></div>
-<div><label>Prix TTC (DH)</label><input id="newProductPrice" type="number" min="0" step=".01" placeholder="50"></div>
-</div>
-<button style="margin-top:15px" onclick="addProduct()">Ajouter le produit</button>
-</div>
-<div class="panel"><h2>Catalogue</h2><div id="manageProducts"></div></div>
+<section id="pos" class="page">
+  <h2 class="page-title">Caisse</h2>
+  <div class="pos-layout">
+    <div>
+      <input id="productSearch" placeholder="🔎 Rechercher un produit..." oninput="renderFood()">
+      <div class="category-list" id="posCategories"></div>
+      <div class="food-grid" id="foodGrid"></div>
+    </div>
+    <div class="card cart">
+      <h3 style="margin-top:0">🛒 Commande</h3>
+      <label>Nom du serveur</label>
+      <input id="serverInput" placeholder="Nom du serveur">
+      <div id="cartItems"></div>
+      <hr>
+      <div class="total-line"><span>Sous-total HT</span><strong id="subtotal">0,00 DH</strong></div>
+      <div class="total-line"><span>TVA (20%)</span><strong id="vat">0,00 DH</strong></div>
+      <div class="total-line grand"><span>Total TTC</span><span id="total">0,00 DH</span></div>
+      <label>Mode de paiement</label>
+      <select id="paymentMethod">
+        <option>Espèces</option><option>Carte bancaire</option><option>Virement</option><option>Autre</option>
+      </select>
+      <label>Date et heure du ticket</label>
+      <input type="datetime-local" id="saleDate">
+      <div class="row" style="margin-top:12px">
+        <button class="secondary" onclick="clearCart()">Vider</button>
+        <button class="success" onclick="completeSale()">Valider la vente</button>
+      </div>
+    </div>
+  </div>
 </section>
 
-<section id="page-restaurants" class="hidden">
-<div class="panel">
-<h2>Créer un restaurant</h2>
-<div class="grid">
-<div><label>Nom du restaurant</label><input id="rName" placeholder="Nom commercial"></div>
-<div><label>Adresse</label><input id="rAddress" placeholder="Adresse complète"></div>
-<div><label>Téléphone</label><input id="rPhone" placeholder="06..."></div>
-<div><label>Nom du serveur par défaut</label><input id="rServer" placeholder="Nom"></div>
-<div><label>Logo du restaurant</label><input id="rLogo" type="file" accept="image/*"></div>
-<div><label>Modèle de ticket</label><select id="rTemplate"><option value="classic">Classique</option><option value="modern">Moderne</option><option value="simple">Simple</option></select></div>
-</div>
-<button style="margin-top:15px" onclick="addRestaurant()">Créer le restaurant</button>
-</div>
-<div class="panel"><h2>Restaurants enregistrés</h2><div id="restaurantList"></div></div>
+<section id="products" class="page">
+  <h2 class="page-title">Gestion des produits</h2>
+  <div class="card">
+    <h3 id="productFormTitle">Ajouter un produit</h3>
+    <input type="hidden" id="productId">
+    <div class="form-grid">
+      <div><label>Nom du produit</label><input id="pName" placeholder="Ex : Pizza Margherita"></div>
+      <div><label>Prix TTC (DH)</label><input id="pPrice" type="number" min="0" step="0.01"></div>
+      <div><label>Catégorie</label><select id="pCategory"></select></div>
+      <div><label>Photo du produit</label><input id="pImage" type="file" accept="image/*"></div>
+      <div class="full"><img id="pImagePreview" class="logo-preview hidden"></div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button onclick="saveProduct()">Enregistrer le produit</button>
+      <button class="secondary" onclick="resetProductForm()">Annuler</button>
+    </div>
+  </div>
+  <div class="card">
+    <input id="productAdminSearch" placeholder="Rechercher..." oninput="renderProducts()">
+    <div class="table-wrap"><table><thead><tr><th>Photo</th><th>Produit</th><th>Catégorie</th><th>Prix TTC</th><th>Actions</th></tr></thead><tbody id="productsTable"></tbody></table></div>
+  </div>
 </section>
 
-<section id="page-history" class="hidden">
-<div class="panel">
-<h2>Tableau de bord</h2>
-<div class="grid">
-<div class="stat">Nombre de ventes<strong id="salesCount">0</strong></div>
-<div class="stat">Chiffre d'affaires<strong id="salesTotal">0 DH</strong></div>
-<div class="stat">Panier moyen<strong id="averageSale">0 DH</strong></div>
-</div>
-</div>
-<div class="panel">
-<h2>Historique des ventes</h2>
-<div style="overflow-x:auto"><div id="salesHistory"></div></div>
-</div>
+<section id="categories" class="page">
+  <h2 class="page-title">Catégories</h2>
+  <div class="card">
+    <label>Nouvelle catégorie</label>
+    <div class="row"><input id="newCategory" placeholder="Nom de la catégorie"><button onclick="addCategory()">Ajouter</button></div>
+  </div>
+  <div class="card" id="categoryListAdmin"></div>
 </section>
 
-<section id="page-settings" class="hidden">
-<div class="panel">
-<h2>Paramètres généraux</h2>
-<label>Taux de TVA (%)</label>
-<input id="vatInput" type="number" min="0" max="100" step=".01">
-<button style="margin-top:12px" onclick="saveSettings()">Enregistrer les paramètres</button>
-<hr>
-<h3>Modèle de ticket</h3>
-<p class="small">Le modèle choisi dans la fiche du restaurant sera utilisé lors de l'impression.</p>
-<h3>Sauvegarde</h3>
-<button onclick="exportData()">Exporter les données (JSON)</button>
-<label>Restaurer une sauvegarde</label>
-<input type="file" accept=".json,application/json" onchange="importData(event)">
-<p class="small">Conservez régulièrement une copie de vos données.</p>
-</div>
+<section id="history" class="page">
+  <h2 class="page-title">Historique des ventes</h2>
+  <div class="card">
+    <div class="form-grid">
+      <div><label>Du</label><input type="date" id="historyFrom" onchange="renderHistory()"></div>
+      <div><label>Au</label><input type="date" id="historyTo" onchange="renderHistory()"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="table-wrap"><table><thead><tr><th>N° Ticket</th><th>Date</th><th>Serveur</th><th>Paiement</th><th>Total TTC</th><th>Actions</th></tr></thead><tbody id="historyTable"></tbody></table></div>
+  </div>
 </section>
 
-<section id="receiptArea" class="hidden">
-<div id="receipt"></div>
-<div class="actions" style="justify-content:center;margin-bottom:30px">
-<button onclick="window.print()">🖨️ Imprimer le ticket</button>
-<button class="secondary" onclick="closeReceipt()">Fermer</button>
-</div>
+<section id="restaurants" class="page">
+  <h2 class="page-title">Gestion des restaurants</h2>
+  <div class="card">
+    <h3 id="restaurantFormTitle">Créer un restaurant</h3>
+    <input type="hidden" id="restaurantId">
+    <div class="form-grid">
+      <div><label>Nom du restaurant</label><input id="rName"></div>
+      <div><label>Nom du serveur par défaut</label><input id="rServer"></div>
+      <div class="full"><label>Adresse</label><textarea id="rAddress" rows="2"></textarea></div>
+      <div><label>Téléphone 1</label><input id="rPhone"></div>
+      <div><label>Téléphone 2</label><input id="rPhone2"></div>
+      <div><label>Logo du restaurant</label><input id="rLogo" type="file" accept="image/*"></div>
+      <div><label>Modèle de ticket</label>
+        <select id="rTemplate"><option value="classic">Classique</option><option value="modern">Moderne</option><option value="compact">Compact</option></select>
+      </div>
+      <div class="full"><img id="rLogoPreview" class="logo-preview hidden"></div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button onclick="saveRestaurant()">Enregistrer</button>
+      <button class="secondary" onclick="resetRestaurantForm()">Annuler</button>
+    </div>
+  </div>
+  <div class="card"><h3>Mes restaurants</h3><div id="restaurantsList"></div></div>
 </section>
+
+<section id="settings" class="page">
+  <h2 class="page-title">Paramètres</h2>
+  <div class="card">
+    <h3>Paramètres du ticket</h3>
+    <label><input type="checkbox" id="showServer" style="width:auto" onchange="saveReceiptSettings()"> Afficher le nom du serveur sur le ticket</label>
+    <label><input type="checkbox" id="showVat" style="width:auto" onchange="saveReceiptSettings()" checked> Afficher la TVA sur le ticket</label>
+    <label>Taux de TVA (%)</label>
+    <input id="vatRate" type="number" min="0" max="100" step="0.1" onchange="saveReceiptSettings()">
+    <p class="muted">Le taux par défaut est de 20 %.</p>
+  </div>
+  <div class="card">
+    <h3>Gestion des données</h3>
+    <p class="muted">Les données sont enregistrées dans le navigateur utilisé. Fais régulièrement une sauvegarde JSON.</p>
+    <button onclick="exportData()">Exporter mes données</button>
+    <button class="secondary" onclick="document.getElementById('restoreFile').click()">Importer une sauvegarde</button>
+  </div>
+</section>
+
+<section id="receiptPrint" class="hidden"></section>
+
 </main>
+</div>
 
 <script>
-const KEY='restaurant_pos_pro_v1';
-let db=JSON.parse(localStorage.getItem(KEY)||'null')||{
-restaurants:[{id:1,name:'Mon Restaurant',address:'',phone:'',server:'',logo:'',template:'classic',products:[
-{id:1,name:'Café',category:'Boissons',price:12},
-{id:2,name:'Thé',category:'Boissons',price:10},
-{id:3,name:'Eau minérale',category:'Boissons',price:8},
-{id:4,name:'Pizza',category:'Plats',price:55},
-{id:5,name:'Sandwich',category:'Plats',price:35}
-]}],active:1,vat:20,sales:[]
+const STORAGE_KEY="restaurant_pos_pro_v1";
+const defaultCategories=["Entrées","Plats","Fast food","Pizza","Tajine","Boissons","Desserts"];
+
+const initialData={
+  restaurants:[{id:"rest1",name:"Mon Restaurant",address:"",phone:"",phone2:"",server:"Serveur",logo:"",template:"classic"}],
+  activeRestaurant:"rest1",
+  categories:[...defaultCategories],
+  products:[],
+  sales:[],
+  settings:{vatRate:20,showServer:true,showVat:true}
 };
+
+let db=loadData();
 let cart=[];
-function save(){localStorage.setItem(KEY,JSON.stringify(db))}
-function restaurant(){return db.restaurants.find(r=>r.id===db.active)||db.restaurants[0]}
-function money(n){return Number(n||0).toLocaleString('fr-MA',{minimumFractionDigits:2,maximumFractionDigits:2})+' DH'}
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function changeRestaurant(){db.active=Number(document.getElementById('restaurantSelect').value);cart=[];save();refresh()}
-function refresh(){
-let sel=document.getElementById('restaurantSelect');
-sel.innerHTML=db.restaurants.map(r=>`<option value="${r.id}" ${r.id===db.active?'selected':''}>${esc(r.name)}</option>`).join('');
-document.getElementById('vatInput').value=db.vat;
-document.getElementById('vatLabel').textContent=db.vat;
-renderProducts();renderCart();renderManageProducts();renderRestaurants();renderHistory();
+let activeCategory="Tous";
+let tempProductImage="";
+let tempRestaurantLogo="";
+
+function loadData(){
+  try{
+    const saved=localStorage.getItem(STORAGE_KEY);
+    if(!saved)return structuredClone(initialData);
+    const d=JSON.parse(saved);
+    return {...structuredClone(initialData),...d,
+      settings:{...initialData.settings,...(d.settings||{})},
+      restaurants:d.restaurants?.length?d.restaurants:initialData.restaurants,
+      categories:d.categories?.length?d.categories:defaultCategories,
+      products:d.products||[],sales:d.sales||[]};
+  }catch(e){return structuredClone(initialData)}
 }
-function showPage(name,btn){
-document.querySelectorAll('main>section').forEach(s=>s.classList.add('hidden'));
-document.getElementById('page-'+name).classList.remove('hidden');
-document.getElementById('receiptArea').classList.add('hidden');
-document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-btn.classList.add('active');
-if(name==='history')renderHistory();
+function persist(){localStorage.setItem(STORAGE_KEY,JSON.stringify(db))}
+function money(n){return Number(n||0).toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2})+" DH"}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function currentRestaurant(){return db.restaurants.find(r=>r.id===db.activeRestaurant)||db.restaurants[0]}
+function dateInputValue(d=new Date()){
+ const z=n=>String(n).padStart(2,"0");
+ return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}T${z(d.getHours())}:${z(d.getMinutes())}`;
 }
-function renderProducts(){
-let q=(document.getElementById('productSearch').value||'').toLowerCase();
-let products=restaurant().products.filter(p=>(p.name+' '+p.category).toLowerCase().includes(q));
-document.getElementById('productList').innerHTML=products.map(p=>`<div class="product"><strong>${esc(p.name)}</strong><div class="small">${esc(p.category)}</div><p class="price">${money(p.price)}</p><button onclick="addToCart(${p.id})">+ Ajouter</button></div>`).join('')||'<p>Aucun produit.</p>';
+function formatDate(d){return new Date(d).toLocaleString("fr-FR")}
+function showPage(id){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ document.querySelectorAll(".sidebar button[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
+ if(id==="dashboard")renderDashboard();
+ if(id==="pos")renderPOS();
+ if(id==="products")renderProducts();
+ if(id==="categories")renderCategories();
+ if(id==="history")renderHistory();
+ if(id==="restaurants")renderRestaurants();
+ if(id==="settings")loadSettings();
+}
+function refreshAll(){
+ renderRestaurantSelector();
+ renderDashboard();
+ renderPOS();
+ renderProducts();
+ renderCategories();
+ renderHistory();
+ renderRestaurants();
+ loadSettings();
+}
+function renderRestaurantSelector(){
+ const s=document.getElementById("restaurantSelector");
+ s.innerHTML=db.restaurants.map(r=>`<option value="${esc(r.id)}" ${r.id===db.activeRestaurant?"selected":""}>${esc(r.name)}</option>`).join("");
+}
+function changeRestaurant(id){
+ db.activeRestaurant=id;persist();cart=[];refreshAll();
+}
+function renderDashboard(){
+ const today=new Date().toDateString();
+ const sales=db.sales.filter(s=>s.restaurantId===db.activeRestaurant);
+ const todaySales=sales.filter(s=>new Date(s.date).toDateString()===today);
+ document.getElementById("todayRevenue").textContent=money(todaySales.reduce((a,s)=>a+s.total,0));
+ document.getElementById("todayCount").textContent=todaySales.length;
+ document.getElementById("allRevenue").textContent=money(sales.reduce((a,s)=>a+s.total,0));
+ document.getElementById("productCount").textContent=db.products.filter(p=>p.restaurantId===db.activeRestaurant).length;
+ document.getElementById("recentSales").innerHTML=sales.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,8).map(s=>`<tr><td>${esc(s.number)}</td><td>${formatDate(s.date)}</td><td>${money(s.total)}</td><td>${esc(s.payment)}</td></tr>`).join("")||'<tr><td colspan="4">Aucune vente.</td></tr>';
+}
+function productForRestaurant(p){return !p.restaurantId||p.restaurantId===db.activeRestaurant}
+function renderPOS(){
+ const r=currentRestaurant();
+ document.getElementById("serverInput").value=r.server||"";
+ document.getElementById("saleDate").value=dateInputValue();
+ const cats=["Tous",...db.categories];
+ document.getElementById("posCategories").innerHTML=cats.map(c=>`<button class="${activeCategory===c?"active":""}" onclick="selectCategory('${esc(c)}')">${esc(c)}</button>`).join("");
+ renderFood();renderCart();
+}
+function selectCategory(c){activeCategory=c;renderPOS()}
+function renderFood(){
+ const search=(document.getElementById("productSearch").value||"").toLowerCase();
+ const products=db.products.filter(p=>productForRestaurant(p)&&
+ (activeCategory==="Tous"||p.category===activeCategory)&&
+ p.name.toLowerCase().includes(search));
+ document.getElementById("foodGrid").innerHTML=products.map(p=>`
+ <div class="food-card" onclick="addToCart('${p.id}')">
+ <img src="${p.image||'https://placehold.co/300x160?text=Produit'}" alt="">
+ <div class="food-info"><strong>${esc(p.name)}</strong><span>${money(p.price)}</span></div>
+ </div>`).join("")||'<p class="muted">Aucun produit dans cette catégorie.</p>';
 }
 function addToCart(id){
-let p=restaurant().products.find(x=>x.id===id);if(!p)return;
-let line=cart.find(x=>x.id===id);
-if(line)line.qty++;else cart.push({...p,qty:1});
-renderCart();
+ const p=db.products.find(x=>x.id===id);
+ if(!p)return;
+ const line=cart.find(x=>x.productId===id);
+ if(line)line.qty++;else cart.push({productId:p.id,name:p.name,price:Number(p.price),qty:1});
+ renderCart();
+}
+function updateQty(id,delta){
+ const line=cart.find(x=>x.productId===id);if(!line)return;
+ line.qty+=delta;if(line.qty<=0)cart=cart.filter(x=>x.productId!==id);
+ renderCart();
+}
+function clearCart(){cart=[];renderCart()}
+function totals(){
+ const total=cart.reduce((a,x)=>a+x.price*x.qty,0);
+ const rate=Number(db.settings.vatRate)||0;
+ const ht=total/(1+rate/100);
+ return {ttc:total,ht,vat:total-ht};
 }
 function renderCart(){
-let box=document.getElementById('cartList');
-box.innerHTML=cart.map(p=>`<div class="cart-line"><div><strong>${esc(p.name)}</strong><br><span class="small">${money(p.price)} × ${p.qty}</span></div><div class="actions"><button class="secondary" onclick="qty(${p.id},-1)">−</button><button onclick="qty(${p.id},1)">+</button><button class="danger" onclick="removeItem(${p.id})">×</button></div></div>`).join('')||'<p class="small">Aucun produit sélectionné.</p>';
-let total=cart.reduce((s,p)=>s+p.price*p.qty,0);
-let ht=total/(1+db.vat/100),vat=total-ht;
-document.getElementById('subtotal').textContent=money(ht);
-document.getElementById('vatAmount').textContent=money(vat);
-document.getElementById('grandTotal').textContent=money(total);
-document.getElementById('vatLabel').textContent=db.vat;
-}
-function qty(id,d){let p=cart.find(x=>x.id===id);if(!p)return;p.qty+=d;if(p.qty<=0)removeItem(id);else renderCart()}
-function removeItem(id){cart=cart.filter(p=>p.id!==id);renderCart()}
-function clearCart(){cart=[];renderCart()}
-function addProduct(){
-let name=document.getElementById('newProductName').value.trim();
-let category=document.getElementById('newProductCategory').value.trim()||'Divers';
-let price=Number(document.getElementById('newProductPrice').value);
-if(!name||!Number.isFinite(price)||price<0){alert('Vérifiez le nom et le prix.');return}
-restaurant().products.push({id:Date.now(),name,category,price});
-save();document.getElementById('newProductName').value='';document.getElementById('newProductPrice').value='';renderProducts();renderManageProducts();
-}
-function renderManageProducts(){
-document.getElementById('manageProducts').innerHTML=restaurant().products.map(p=>`<div class="cart-line"><div><strong>${esc(p.name)}</strong><br>${money(p.price)}</div><button class="danger" onclick="deleteProduct(${p.id})">Supprimer</button></div>`).join('')||'Aucun produit';
-}
-function deleteProduct(id){if(!confirm('Supprimer ce produit ?'))return;restaurant().products=restaurant().products.filter(p=>p.id!==id);save();refresh()}
-async function addRestaurant(){
-let name=document.getElementById('rName').value.trim();if(!name){alert('Saisissez le nom du restaurant.');return}
-let logo='';let file=document.getElementById('rLogo').files[0];
-if(file){logo=await new Promise((resolve,reject)=>{let reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file)})}
-let r={id:Date.now(),name,address:document.getElementById('rAddress').value,phone:document.getElementById('rPhone').value,server:document.getElementById('rServer').value,logo,template:document.getElementById('rTemplate').value,products:[]};
-db.restaurants.push(r);db.active=r.id;save();refresh();alert('Restaurant créé.');
-}
-function renderRestaurants(){
-document.getElementById('restaurantList').innerHTML=db.restaurants.map(r=>`<div class="cart-line"><div><strong>${esc(r.name)}</strong><br><span class="small">${esc(r.address)} · ${esc(r.phone)}</span></div><button class="secondary" onclick="editRestaurant(${r.id})">Modifier</button></div>`).join('');
-}
-function editRestaurant(id){
-let r=db.restaurants.find(x=>x.id===id);if(!r)return;
-let name=prompt('Nom du restaurant',r.name);if(name===null)return;
-let address=prompt('Adresse',r.address);if(address===null)return;
-let phone=prompt('Téléphone',r.phone);if(phone===null)return;
-r.name=name.trim()||r.name;r.address=address;r.phone=phone;save();refresh();
+ document.getElementById("cartItems").innerHTML=cart.map(x=>`
+ <div class="cart-line"><div><strong>${esc(x.name)}</strong><br>${money(x.price)} × ${x.qty}</div>
+ <div class="row" style="flex:0 0 auto"><button class="small secondary" onclick="updateQty('${x.productId}',-1)">−</button><b>${x.qty}</b><button class="small" onclick="updateQty('${x.productId}',1)">+</button></div></div>`).join("")||'<p class="muted">Le panier est vide.</p>';
+ const t=totals();
+ document.getElementById("subtotal").textContent=money(t.ht);
+ document.getElementById("vat").textContent=money(t.vat);
+ document.getElementById("total").textContent=money(t.ttc);
 }
 function completeSale(){
-if(!cart.length){alert('Le panier est vide.');return}
-let total=cart.reduce((s,p)=>s+p.price*p.qty,0),ht=total/(1+db.vat/100);
-let sale={id:Date.now(),restaurantId:db.active,restaurantName:restaurant().name,items:cart.map(p=>({...p})),total,ht,vat:total-ht,vatRate:db.vat,payment:document.getElementById('payment').value,orderType:document.getElementById('orderType').value,server:document.getElementById('server').value||restaurant().server,table:document.getElementById('tableNumber').value,date:new Date().toISOString()};
-db.sales.unshift(sale);save();showReceipt(sale);cart=[];renderCart();renderHistory();
+ if(!cart.length){alert("Le panier est vide.");return}
+ const date=document.getElementById("saleDate").value;
+ if(!date){alert("Veuillez choisir la date du ticket.");return}
+ const r=currentRestaurant();
+ const t=totals();
+ const sale={
+  id:crypto.randomUUID(),number:"T"+Date.now().toString().slice(-8),
+  restaurantId:r.id,restaurantName:r.name,
+  date:new Date(date).toISOString(),
+  server:document.getElementById("serverInput").value.trim(),
+  payment:document.getElementById("paymentMethod").value,
+  items:cart.map(x=>({...x})),ht:t.ht,vat:t.vat,total:t.ttc,
+  vatRate:Number(db.settings.vatRate)||0
+ };
+ db.sales.push(sale);persist();cart=[];
+ renderCart();renderDashboard();renderHistory();
+ printReceipt(sale);
 }
-function showReceipt(s,editable=true){
-document.getElementById('page-pos').classList.add('hidden');
-let r=db.restaurants.find(x=>x.id===s.restaurantId)||restaurant();
-let template=r.template||'classic';
-let date=new Date(s.date);
-let logo=r.logo?`<img src="${r.logo}" alt="Logo">`:'';
-document.getElementById('receipt').innerHTML=`<div class="receipt-center">${logo}<h2>${esc(r.name)}</h2><div>${esc(r.address)}</div><div>${esc(r.phone)}</div><hr><strong>TICKET DE CAISSE</strong><p>${date.toLocaleDateString('fr-FR')} ${date.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</p></div><div class="receipt-row"><span>Commande</span><span>${esc(s.orderType)}</span></div><div class="receipt-row"><span>Serveur</span><span>${esc(s.server||'—')}</span></div><div class="receipt-row"><span>Table</span><span>${esc(s.table||'—')}</span></div><hr>${s.items.map(p=>`<div class="receipt-row"><span>${esc(p.name)} × ${p.qty}</span><strong>${money(p.price*p.qty)}</strong></div>`).join('')}<hr><div class="receipt-row"><span>Total HT</span><span>${money(s.ht)}</span></div><div class="receipt-row"><span>TVA ${s.vatRate}%</span><span>${money(s.vat)}</span></div><div class="receipt-row total"><span>TOTAL TTC</span><span>${money(s.total)}</span></div><div class="receipt-row"><span>Paiement</span><span>${esc(s.payment)}</span></div><hr><div class="receipt-center"><strong>Merci pour votre visite !</strong><p class="small">${template==='modern'?'À bientôt chez nous !':template==='simple'?'Merci.':'Votre satisfaction est notre priorité.'}</p></div>`;
-document.getElementById('receiptArea').classList.remove('hidden');
+function renderProducts(){
+ const q=(document.getElementById("productAdminSearch")?.value||"").toLowerCase();
+ const list=db.products.filter(p=>productForRestaurant(p)&&p.name.toLowerCase().includes(q));
+ document.getElementById("productsTable").innerHTML=list.map(p=>`<tr>
+ <td>${p.image?`<img src="${p.image}" style="width:45px;height:35px;object-fit:cover">`:"—"}</td>
+ <td>${esc(p.name)}</td><td>${esc(p.category)}</td><td>${money(p.price)}</td>
+ <td><button class="small" onclick="editProduct('${p.id}')">Modifier</button> <button class="small danger" onclick="deleteProduct('${p.id}')">Supprimer</button></td>
+ </tr>`).join("")||'<tr><td colspan="5">Aucun produit.</td></tr>';
+ document.getElementById("pCategory").innerHTML=db.categories.map(c=>`<option>${esc(c)}</option>`).join("");
 }
-function closeReceipt(){document.getElementById('receiptArea').classList.add('hidden');document.getElementById('page-pos').classList.remove('hidden')}
+function saveProduct(){
+ const id=document.getElementById("productId").value;
+ const name=document.getElementById("pName").value.trim();
+ const price=Number(document.getElementById("pPrice").value);
+ const category=document.getElementById("pCategory").value;
+ if(!name||!Number.isFinite(price)||price<0){alert("Veuillez saisir un nom et un prix valides.");return}
+ const old=db.products.find(p=>p.id===id);
+ const product={id:id||crypto.randomUUID(),name,price,category,image:tempProductImage||old?.image||"",restaurantId:db.activeRestaurant};
+ if(old)Object.assign(old,product);else db.products.push(product);
+ persist();resetProductForm();renderProducts();renderPOS();renderDashboard();
+}
+function editProduct(id){
+ const p=db.products.find(x=>x.id===id);if(!p)return;
+ document.getElementById("productId").value=p.id;
+ document.getElementById("pName").value=p.name;
+ document.getElementById("pPrice").value=p.price;
+ document.getElementById("pCategory").value=p.category;
+ tempProductImage=p.image||"";
+ document.getElementById("pImagePreview").src=tempProductImage;
+ document.getElementById("pImagePreview").classList.toggle("hidden",!tempProductImage);
+ document.getElementById("productFormTitle").textContent="Modifier le produit";
+ window.scrollTo(0,0);
+}
+function deleteProduct(id){
+ if(!confirm("Supprimer ce produit ?"))return;
+ db.products=db.products.filter(p=>p.id!==id);persist();renderProducts();renderPOS();renderDashboard();
+}
+function resetProductForm(){
+ document.getElementById("productId").value="";
+ document.getElementById("pName").value="";
+ document.getElementById("pPrice").value="";
+ document.getElementById("pImage").value="";
+ document.getElementById("productFormTitle").textContent="Ajouter un produit";
+ tempProductImage="";
+ document.getElementById("pImagePreview").classList.add("hidden");
+}
+document.getElementById("pImage").addEventListener("change",e=>readImage(e.target.files[0],v=>{
+ tempProductImage=v;document.getElementById("pImagePreview").src=v;document.getElementById("pImagePreview").classList.remove("hidden");
+}));
+function addCategory(){
+ const name=document.getElementById("newCategory").value.trim();
+ if(!name)return;
+ if(db.categories.some(c=>c.toLowerCase()===name.toLowerCase())){alert("Cette catégorie existe déjà.");return}
+ db.categories.push(name);document.getElementById("newCategory").value="";
+ persist();renderCategories();renderProducts();renderPOS();
+}
+function renderCategories(){
+ document.getElementById("categoryListAdmin").innerHTML=db.categories.map(c=>`<div class="row" style="padding:8px;border-bottom:1px solid var(--border)"><strong>${esc(c)}</strong><button class="small danger" style="flex:0 0 auto" onclick="deleteCategory('${esc(c)}')">Supprimer</button></div>`).join("");
+}
+function deleteCategory(c){
+ if(db.products.some(p=>p.category===c&&productForRestaurant(p))){alert("Cette catégorie contient encore des produits. Déplace ou supprime ces produits d'abord.");return}
+ if(!confirm("Supprimer la catégorie "+c+" ?"))return;
+ db.categories=db.categories.filter(x=>x!==c);persist();renderCategories();renderProducts();renderPOS();
+}
 function renderHistory(){
-let sales=db.sales.filter(s=>s.restaurantId===db.active),sum=sales.reduce((a,s)=>a+s.total,0);
-document.getElementById('salesCount').textContent=sales.length;
-document.getElementById('salesTotal').textContent=money(sum);
-document.getElementById('averageSale').textContent=money(sales.length?sum/sales.length:0);
-document.getElementById('salesHistory').innerHTML=sales.map(s=>`<div class="cart-line"><div><strong>${new Date(s.date).toLocaleString('fr-FR')}</strong><br><span class="small">${esc(s.payment)} · ${esc(s.orderType)}</span><br>${money(s.total)}</div><div class="actions"><button class="secondary" onclick="reprint(${s.id})">Ticket</button></div></div>`).join('')||'<p>Aucune vente enregistrée.</p>';
+ const from=document.getElementById("historyFrom").value;
+ const to=document.getElementById("historyTo").value;
+ const list=db.sales.filter(s=>s.restaurantId===db.activeRestaurant)
+ .filter(s=>!from||s.date.slice(0,10)>=from).filter(s=>!to||s.date.slice(0,10)<=to)
+ .slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
+ document.getElementById("historyTable").innerHTML=list.map(s=>`<tr>
+ <td>${esc(s.number)}</td><td>${formatDate(s.date)}</td><td>${esc(s.server)}</td><td>${esc(s.payment)}</td><td>${money(s.total)}</td>
+ <td><button class="small" onclick="editSaleDate('${s.id}')">Date</button> <button class="small" onclick="reprintSale('${s.id}')">Ticket</button> <button class="small danger" onclick="deleteSale('${s.id}')">×</button></td>
+ </tr>`).join("")||'<tr><td colspan="6">Aucune vente trouvée.</td></tr>';
 }
-function reprint(id){let s=db.sales.find(x=>x.id===id);if(s)showReceipt(s)}
-function saveSettings(){let v=Number(document.getElementById('vatInput').value);if(!Number.isFinite(v)||v<0||v>100){alert('Taux de TVA invalide.');return}db.vat=v;save();renderCart();alert('Paramètres enregistrés.')}
+function editSaleDate(id){
+ const s=db.sales.find(x=>x.id===id);if(!s)return;
+ const newDate=prompt("Nouvelle date et heure (AAAA-MM-JJTHH:MM)",dateInputValue(new Date(s.date)));
+ if(!newDate)return;
+ const d=new Date(newDate);if(isNaN(d)){alert("Date invalide.");return}
+ s.date=d.toISOString();persist();renderHistory();renderDashboard();
+}
+function deleteSale(id){
+ if(!confirm("Supprimer définitivement ce ticket ?"))return;
+ db.sales=db.sales.filter(s=>s.id!==id);persist();renderHistory();renderDashboard();
+}
+function reprintSale(id){const s=db.sales.find(x=>x.id===id);if(s)printReceipt(s)}
+function renderRestaurants(){
+ document.getElementById("restaurantsList").innerHTML=db.restaurants.map(r=>`
+ <div class="row" style="border-bottom:1px solid var(--border);padding:10px 0">
+ <div><strong>${esc(r.name)}</strong><br><span class="muted">${esc(r.address||"Adresse non renseignée")}</span></div>
+ <button class="small" style="flex:0 0 auto" onclick="editRestaurant('${r.id}')">Modifier</button>
+ <button class="small danger" style="flex:0 0 auto" onclick="deleteRestaurant('${r.id}')">Supprimer</button>
+ </div>`).join("");
+}
+function saveRestaurant(){
+ const id=document.getElementById("restaurantId").value;
+ const name=document.getElementById("rName").value.trim();
+ if(!name){alert("Le nom du restaurant est obligatoire.");return}
+ const old=db.restaurants.find(r=>r.id===id);
+ const r={id:id||crypto.randomUUID(),name,
+  server:document.getElementById("rServer").value.trim(),
+  address:document.getElementById("rAddress").value.trim(),
+  phone:document.getElementById("rPhone").value.trim(),
+  phone2:document.getElementById("rPhone2").value.trim(),
+  logo:tempRestaurantLogo||old?.logo||"",
+  template:document.getElementById("rTemplate").value};
+ if(old)Object.assign(old,r);else db.restaurants.push(r);
+ db.activeRestaurant=r.id;persist();resetRestaurantForm();refreshAll();
+}
+function editRestaurant(id){
+ const r=db.restaurants.find(x=>x.id===id);if(!r)return;
+ document.getElementById("restaurantId").value=r.id;
+ document.getElementById("rName").value=r.name;
+ document.getElementById("rServer").value=r.server||"";
+ document.getElementById("rAddress").value=r.address||"";
+ document.getElementById("rPhone").value=r.phone||"";
+ document.getElementById("rPhone2").value=r.phone2||"";
+ document.getElementById("rTemplate").value=r.template||"classic";
+ tempRestaurantLogo=r.logo||"";
+ document.getElementById("rLogoPreview").src=tempRestaurantLogo;
+ document.getElementById("rLogoPreview").classList.toggle("hidden",!tempRestaurantLogo);
+ document.getElementById("restaurantFormTitle").textContent="Modifier le restaurant";
+ window.scrollTo(0,0);
+}
+function deleteRestaurant(id){
+ if(db.restaurants.length<=1){alert("Il faut conserver au moins un restaurant.");return}
+ if(!confirm("Supprimer ce restaurant ? Ses tickets historiques seront conservés."))return;
+ db.restaurants=db.restaurants.filter(r=>r.id!==id);
+ if(db.activeRestaurant===id)db.activeRestaurant=db.restaurants[0].id;
+ persist();refreshAll();
+}
+function resetRestaurantForm(){
+ ["restaurantId","rName","rServer","rAddress","rPhone","rPhone2"].forEach(id=>document.getElementById(id).value="");
+ document.getElementById("rLogo").value="";
+ document.getElementById("restaurantFormTitle").textContent="Créer un restaurant";
+ document.getElementById("rLogoPreview").classList.add("hidden");tempRestaurantLogo="";
+}
+document.getElementById("rLogo").addEventListener("change",e=>readImage(e.target.files[0],v=>{
+ tempRestaurantLogo=v;document.getElementById("rLogoPreview").src=v;document.getElementById("rLogoPreview").classList.remove("hidden");
+}));
+function readImage(file,callback){
+ if(!file)return;
+ if(file.size>3*1024*1024){alert("Image trop volumineuse. Choisis une image de moins de 3 Mo.");return}
+ const reader=new FileReader();
+ reader.onload=()=>callback(reader.result);
+ reader.readAsDataURL(file);
+}
+function loadSettings(){
+ document.getElementById("vatRate").value=db.settings.vatRate;
+ document.getElementById("showServer").checked=db.settings.showServer;
+ document.getElementById("showVat").checked=db.settings.showVat;
+}
+function saveReceiptSettings(){
+ db.settings.vatRate=Math.max(0,Number(document.getElementById("vatRate").value)||0);
+ db.settings.showServer=document.getElementById("showServer").checked;
+ db.settings.showVat=document.getElementById("showVat").checked;
+ persist();renderCart();
+}
+function printReceipt(sale){
+ const r=db.restaurants.find(x=>x.id===sale.restaurantId)||currentRestaurant();
+ const template=r.template||"classic";
+ const date=formatDate(sale.date);
+ const rows=sale.items.map(x=>`<tr><td>${esc(x.name)}<br><small>${x.qty} × ${money(x.price)}</small></td><td style="text-align:right">${money(x.qty*x.price)}</td></tr>`).join("");
+ const logo=r.logo?`<img src="${r.logo}" style="max-width:110px;max-height:65px;object-fit:contain;margin-bottom:8px">`:"";
+ const server=db.settings.showServer&&sale.server?`<p>Serveur : ${esc(sale.server)}</p>`:"";
+ const vat=db.settings.showVat?`<p>TVA (${sale.vatRate}%) : ${money(sale.vat)}</p>`:"";
+ const style=template==="modern"?"font-family:Arial;border:1px solid #ddd;padding:16px;border-radius:10px":template==="compact"?"font-family:monospace;font-size:12px":"font-family:Arial";
+ const area=document.getElementById("receiptPrint");
+ area.innerHTML=`<div style="${style};max-width:360px;margin:auto;color:#111">
+ <div style="text-align:center">${logo}<h2 style="margin:5px">${esc(r.name)}</h2>
+ <p>${esc(r.address||"")}</p><p>${esc(r.phone||"")}${r.phone2?" / "+esc(r.phone2):""}</p>
+ <hr><h3>FACTURE / TICKET</h3><p>N° ${esc(sale.number)}</p><p>${date}</p>${server}</div>
+ <hr><table style="width:100%;font-size:13px"><tbody>${rows}</tbody></table><hr>
+ <p>Sous-total HT : ${money(sale.ht)}</p>${vat}
+ <h2 style="text-align:right">TOTAL TTC : ${money(sale.total)}</h2>
+ <p>Mode de paiement : ${esc(sale.payment)}</p>
+ <hr><p style="text-align:center">Merci pour votre visite !</p></div>`;
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ area.classList.remove("hidden");
+ setTimeout(()=>window.print(),250);
+ window.onafterprint=()=>{
+  area.classList.add("hidden");
+  showPage("pos");
+ };
+}
 function exportData(){
-let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='restaurant-pos-backup.json';a.click();URL.revokeObjectURL(url);
+ const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");a.href=url;a.download="POS-Restaurant-Backup.json";a.click();
+ URL.revokeObjectURL(url);
 }
-function importData(e){
-let f=e.target.files[0];if(!f)return;
-let reader=new FileReader();reader.onload=()=>{try{let data=JSON.parse(reader.result);if(!data.restaurants||!data.sales)throw Error();db=data;save();refresh();alert('Sauvegarde restaurée.')}catch(err){alert('Fichier de sauvegarde invalide.')}};reader.readAsText(f);
+function restoreData(event){
+ const file=event.target.files[0];if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+  try{
+   const d=JSON.parse(reader.result);
+   if(!d.restaurants||!d.products||!d.sales)throw new Error("Format incorrect");
+   if(!confirm("Remplacer les données actuelles par cette sauvegarde ?"))return;
+   db={...structuredClone(initialData),...d};persist();refreshAll();alert("Sauvegarde restaurée.");
+  }catch(e){alert("Fichier de sauvegarde invalide.")}
+  event.target.value="";
+ };
+ reader.readAsText(file);
 }
-refresh();
+
+// Initialisation
+document.getElementById("saleDate").value=dateInputValue();
+refreshAll();
 </script>
 </body>
 </html>
