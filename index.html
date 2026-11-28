@@ -4,597 +4,579 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>POS Restaurant Pro</title>
+<meta name="theme-color" content="#101827">
+<title>POS RESTAURANT PRO</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--primary:#172554;--accent:#f59e0b;--bg:#f3f5f9;--white:#fff;--text:#182033;--muted:#687386;--border:#e3e7ef;--green:#15803d;--red:#dc2626}
+:root{--bg:#f3f5f9;--dark:#101827;--panel:#fff;--primary:#d69b35;--text:#202b3c;--muted:#788397;--border:#e4e8ef;--green:#16845b;--red:#d74b4b}
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer;border:0;border-radius:8px;padding:10px 14px;background:var(--primary);color:white}
-button.secondary{background:#e8edf5;color:#26334a}
-button.danger{background:var(--red)}
-button.success{background:var(--green)}
-button.small{padding:6px 9px;font-size:12px}
-input,select,textarea{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:white;color:var(--text)}
-label{display:block;font-size:13px;font-weight:bold;margin:10px 0 5px}
-.header{background:var(--primary);color:white;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.header h2{margin:0;font-size:20px}
-.header select{width:auto;min-width:170px}
+body{margin:0;background:var(--bg);font-family:Arial,sans-serif;color:var(--text)}
+button,input,select{font:inherit}
+button{cursor:pointer;border:0;border-radius:8px;padding:11px 15px;font-weight:600}
+.topbar{background:var(--dark);color:white;padding:15px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-size:20px;font-weight:800;letter-spacing:1px}
+.brand span{color:var(--primary)}
+.topinfo{font-size:12px;color:#cbd5e1}
 .layout{display:flex;min-height:calc(100vh - 60px)}
-.sidebar{width:205px;background:#101b3b;padding:15px 10px;flex-shrink:0}
-.sidebar button{width:100%;text-align:left;background:transparent;color:#dbe4ff;margin:3px 0}
-.sidebar button.active,.sidebar button:hover{background:#293b70;color:white}
-.main{padding:18px;flex:1;min-width:0}
+.sidebar{width:220px;background:#182437;padding:18px 12px;flex-shrink:0}
+.nav{display:block;width:100%;text-align:left;background:transparent;color:#d6deeb;margin:4px 0;padding:13px;border-radius:8px}
+.nav.active,.nav:hover{background:#293b55;color:white}
+.nav small{display:block;color:#91a1b9;font-size:10px;margin-top:4px}
+main{padding:22px;flex:1;min-width:0}
 .page{display:none}.page.active{display:block}
-h2.page-title{margin:0 0 18px;font-size:22px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
-.card{background:white;border:1px solid var(--border);border-radius:12px;padding:15px;margin-bottom:14px}
-.stat{font-size:25px;font-weight:bold;margin-top:8px}
-.muted{color:var(--muted);font-size:13px}
-.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.form-grid .full{grid-column:1/-1}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.row>*{flex:1}
-.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.toolbar button{flex:0 0 auto}
-.category-list{display:flex;gap:7px;overflow-x:auto;margin:12px 0;padding-bottom:5px}
-.category-list button{white-space:nowrap;background:#e4e9f2;color:#29344b}
-.category-list button.active{background:var(--primary);color:white}
-.pos-layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:15px}
-.food-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:10px}
-.food-card{background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer}
-.food-card img{width:100%;height:90px;object-fit:cover;display:block;background:#edf0f4}
-.food-card .food-info{padding:9px}
-.food-card strong{font-size:14px;display:block}
-.food-card span{color:var(--green);font-weight:bold;font-size:13px}
-.cart{position:sticky;top:10px;align-self:start}
-.cart-line{display:flex;justify-content:space-between;gap:6px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
-.cart-line button{padding:3px 7px}
-.total-line{display:flex;justify-content:space-between;margin:9px 0}
-.total-line.grand{font-size:20px;font-weight:bold;border-top:1px solid var(--border);padding-top:12px}
-table{width:100%;border-collapse:collapse;background:white;font-size:13px}
-th,td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left}
-th{background:#f0f3f8}
-.table-wrap{overflow-x:auto;border-radius:10px}
-.badge{padding:4px 7px;border-radius:20px;background:#e5f5e9;color:#166534;font-size:11px}
-.hidden{display:none!important}
-.logo-preview{max-width:100px;max-height:70px;object-fit:contain}
-.notice{padding:10px;background:#fff7df;border-radius:8px;font-size:13px;margin:10px 0}
-hr{border:0;border-top:1px solid var(--border);margin:14px 0}
-@media(max-width:800px){
- .layout{display:block}.sidebar{width:100%;display:flex;overflow-x:auto;padding:7px}
- .sidebar button{width:auto;white-space:nowrap;font-size:12px;padding:9px}
- .main{padding:12px}.pos-layout{grid-template-columns:1fr}
- .cart{position:static}.form-grid{grid-template-columns:1fr}
- .header h2{font-size:16px}
-}
-@media print{
- body{background:white}.header,.sidebar,.no-print{display:none!important}
- .main{padding:0}.page{display:none!important}#receiptPrint{display:block!important}
-}
+h1{font-size:24px;margin:0 0 7px}
+.subtitle{color:var(--muted);font-size:13px;margin-bottom:22px}
+.panel{background:white;border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:17px}
+.panel h3{margin:0 0 15px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.stat{background:white;border:1px solid var(--border);border-radius:12px;padding:17px}
+.stat small{color:var(--muted)}
+.stat strong{display:block;font-size:24px;margin-top:9px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.between{justify-content:space-between}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;min-width:0}
+.field label{font-size:12px;color:#657186;font-weight:700}
+input,select{border:1px solid var(--border);padding:11px;border-radius:8px;background:white;color:var(--text);width:100%;min-width:0}
+.primary{background:var(--primary);color:#20180b}
+.dark{background:var(--dark);color:white}
+.green{background:var(--green);color:white}
+.danger{background:#fff0f0;color:var(--red)}
+.light{background:#edf1f6;color:#344256}
+.smallbtn{padding:7px 10px;font-size:12px}
+.categorybar{display:flex;gap:7px;overflow:auto;margin:13px 0;padding-bottom:5px}
+.categorybar button{white-space:nowrap;background:#e8edf4;color:#344256}
+.categorybar button.active{background:var(--dark);color:white}
+.pos{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:15px}
+.products{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.product{background:white;border:1px solid var(--border);border-radius:10px;padding:13px;text-align:left;min-height:105px}
+.product:hover{border-color:var(--primary);transform:translateY(-1px)}
+.product strong{display:block;font-size:14px;margin-bottom:9px}
+.product span{font-size:13px;color:#a36d14;font-weight:800}
+.product small{display:block;color:var(--muted);margin-top:5px}
+.cart{background:white;border:1px solid var(--border);border-radius:12px;padding:15px;align-self:start}
+.cartitem{padding:10px 0;border-bottom:1px solid var(--border)}
+.cartitem strong{font-size:13px}
+.qty{display:flex;align-items:center;gap:7px;margin-top:7px}
+.qty button{padding:4px 9px;background:#edf1f6}
+.totals{padding-top:12px}
+.totalrow{display:flex;justify-content:space-between;padding:5px 0;font-size:13px}
+.totalrow.final{font-size:19px;font-weight:800;border-top:1px solid var(--border);margin-top:7px;padding-top:12px}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:600px}
+th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--border);font-size:13px}
+th{background:#f7f8fa;color:#68758a}
+.badge{background:#e9f7f0;color:var(--green);padding:5px 8px;border-radius:20px;font-size:11px}
+.logo-preview{width:75px;height:75px;object-fit:contain;border:1px solid var(--border);border-radius:8px}
+.empty{text-align:center;color:var(--muted);padding:25px}
+.modal{position:fixed;inset:0;background:#10182799;display:none;align-items:center;justify-content:center;padding:15px;z-index:20}
+.modal.open{display:flex}
+.modalbox{background:white;border-radius:14px;padding:22px;width:min(550px,100%);max-height:90vh;overflow:auto}
+.modalbox h2{margin-top:0}
+.ticket{background:white;color:#111;width:80mm;max-width:100%;margin:auto;padding:4mm;font-family:Arial,sans-serif;font-size:12px}
+.ticket.center{text-align:center}
+.ticket .line{border-top:1px dashed #555;margin:9px 0}
+.ticket table{min-width:0}
+.ticket th,.ticket td{padding:4px 1px;font-size:11px;background:white;color:#111}
+.ticket .t-total{font-size:15px;font-weight:bold}
+.ticket img{max-width:65px;max-height:60px;object-fit:contain}
+.ticket h2{font-size:18px;margin:5px 0}
+.ticket-design-2{border:1px solid #111;padding:7px}
+.ticket-design-3{font-family:monospace;letter-spacing:.2px}
+#ticketPreview{background:#e7ebf0;padding:15px;overflow:auto}
+@media(max-width:1050px){.pos{grid-template-columns:1fr}.cart{position:static}.products{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.layout{display:block}.sidebar{width:100%;display:flex;overflow-x:auto;padding:8px}.nav{min-width:105px;text-align:center;font-size:12px;padding:10px 7px}.nav small{display:none}main{padding:12px}.grid{grid-template-columns:repeat(2,1fr)}.products{grid-template-columns:repeat(2,minmax(0,1fr))}.topbar{padding:12px}.brand{font-size:17px}h1{font-size:21px}}
+@media print{body *{visibility:hidden!important}#ticketPreview,#ticketPreview *{visibility:visible!important}#ticketPreview{position:absolute;left:0;top:0;width:80mm;padding:0;background:white}.ticket{width:80mm;margin:0;padding:3mm}.no-print{display:none!important}}
 </style>
 </head>
 <body>
-
-<header class="header">
-  <h2>🍽️ POS RESTAURANT PRO</h2>
-  <div class="row" style="flex:0 1 auto">
-    <select id="restaurantSelector" onchange="changeRestaurant(this.value)"></select>
-    <button class="small" onclick="showPage('settings')">⚙️</button>
-  </div>
+<header class="topbar">
+ <div class="brand">POS <span>RESTAURANT PRO</span></div>
+ <div class="topinfo" id="topRestaurant">Aucun restaurant sélectionné</div>
+ <div class="topinfo" id="clock"></div>
 </header>
-
 <div class="layout">
-<nav class="sidebar no-print">
-  <button class="active" data-page="dashboard" onclick="showPage('dashboard')">📊 Tableau de bord</button>
-  <button data-page="pos" onclick="showPage('pos')">🛒 Caisse</button>
-  <button data-page="products" onclick="showPage('products')">🍔 Produits</button>
-  <button data-page="categories" onclick="showPage('categories')">📂 Catégories</button>
-  <button data-page="history" onclick="showPage('history')">🧾 Historique</button>
-  <button data-page="restaurants" onclick="showPage('restaurants')">🏪 Restaurants</button>
-  <button data-page="settings" onclick="showPage('settings')">⚙️ Paramètres</button>
-  <button onclick="exportData()">💾 Sauvegarde</button>
-  <button onclick="document.getElementById('restoreFile').click()">📥 Restaurer</button>
-  <input type="file" id="restoreFile" accept=".json" class="hidden" onchange="restoreData(event)">
-</nav>
+<aside class="sidebar">
+ <button class="nav active" data-page="caisse">🛒 Caisse<small>Nouvelle vente</small></button>
+ <button class="nav" data-page="restaurants">🏪 Restaurants<small>Gestion</small></button>
+ <button class="nav" data-page="menu">🍽️ Menu<small>Produits et prix</small></button>
+ <button class="nav" data-page="historique">🧾 Historique<small>Tickets et ventes</small></button>
+ <button class="nav" data-page="statistiques">📊 Statistiques<small>Chiffre d'affaires</small></button>
+ <button class="nav" data-page="parametres">⚙️ Paramètres<small>Sauvegarde</small></button>
+</aside>
+<main>
 
-<main class="main">
-
-<section id="dashboard" class="page active">
-  <h2 class="page-title">Tableau de bord</h2>
-  <div class="grid">
-    <div class="card"><div class="muted">Chiffre d'affaires aujourd'hui</div><div class="stat" id="todayRevenue">0 DH</div></div>
-    <div class="card"><div class="muted">Nombre de tickets</div><div class="stat" id="todayCount">0</div></div>
-    <div class="card"><div class="muted">Total des ventes</div><div class="stat" id="allRevenue">0 DH</div></div>
-    <div class="card"><div class="muted">Nombre de produits</div><div class="stat" id="productCount">0</div></div>
+<section class="page active" id="page-caisse">
+ <h1>Point de vente</h1><div class="subtitle">Gestion rapide des commandes et encaissements.</div>
+ <div class="row between">
+  <div class="field" style="flex:1;max-width:350px"><label>Restaurant actif</label><select id="activeRestaurant"></select></div>
+  <div class="field" style="width:180px"><label>Nom du serveur</label><input id="serverName" placeholder="Serveur"></div>
+ </div>
+ <div class="pos">
+  <div>
+   <input id="productSearch" placeholder="🔎 Rechercher un plat..." oninput="renderProducts()">
+   <div class="categorybar" id="categoryBar"></div>
+   <div class="products" id="productsGrid"></div>
   </div>
-  <div class="card">
-    <h3>Dernières ventes</h3>
-    <div class="table-wrap"><table><thead><tr><th>Ticket</th><th>Date</th><th>Total TTC</th><th>Paiement</th></tr></thead><tbody id="recentSales"></tbody></table></div>
+  <div class="cart">
+   <div class="row between"><h3>Commande</h3><button class="light smallbtn" onclick="clearCart()">Vider</button></div>
+   <div id="cartItems"><div class="empty">Aucun article</div></div>
+   <div class="totals">
+    <div class="totalrow"><span>Total HT</span><strong id="cartHT">0,00 DH</strong></div>
+    <div class="totalrow"><span>TVA (20%)</span><strong id="cartVAT">0,00 DH</strong></div>
+    <div class="totalrow final"><span>TOTAL TTC</span><strong id="cartTTC">0,00 DH</strong></div>
+   </div>
+   <div class="field" style="margin-top:12px"><label>Mode de paiement</label><select id="payment"><option>Espèces</option><option>Carte bancaire</option><option>Virement</option><option>Autre</option></select></div>
+   <div class="field"><label>Type de commande</label><select id="orderType"><option>Sur place</option><option>À emporter</option><option>Livraison</option></select></div>
+   <button class="primary" style="width:100%;margin-top:8px" onclick="checkout()">VALIDER ET IMPRIMER</button>
   </div>
+ </div>
 </section>
 
-<section id="pos" class="page">
-  <h2 class="page-title">Caisse</h2>
-  <div class="pos-layout">
-    <div>
-      <input id="productSearch" placeholder="🔎 Rechercher un produit..." oninput="renderFood()">
-      <div class="category-list" id="posCategories"></div>
-      <div class="food-grid" id="foodGrid"></div>
-    </div>
-    <div class="card cart">
-      <h3 style="margin-top:0">🛒 Commande</h3>
-      <label>Nom du serveur</label>
-      <input id="serverInput" placeholder="Nom du serveur">
-      <div id="cartItems"></div>
-      <hr>
-      <div class="total-line"><span>Sous-total HT</span><strong id="subtotal">0,00 DH</strong></div>
-      <div class="total-line"><span>TVA (20%)</span><strong id="vat">0,00 DH</strong></div>
-      <div class="total-line grand"><span>Total TTC</span><span id="total">0,00 DH</span></div>
-      <label>Mode de paiement</label>
-      <select id="paymentMethod">
-        <option>Espèces</option><option>Carte bancaire</option><option>Virement</option><option>Autre</option>
-      </select>
-      <label>Date et heure du ticket</label>
-      <input type="datetime-local" id="saleDate">
-      <div class="row" style="margin-top:12px">
-        <button class="secondary" onclick="clearCart()">Vider</button>
-        <button class="success" onclick="completeSale()">Valider la vente</button>
-      </div>
-    </div>
+<section class="page" id="page-restaurants">
+ <h1>Gestion des restaurants</h1><div class="subtitle">Chaque restaurant dispose de ses propres informations et de son catalogue.</div>
+ <div class="panel">
+  <h3 id="restaurantFormTitle">Ajouter un restaurant</h3>
+  <input type="hidden" id="restaurantId">
+  <div class="grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+   <div class="field"><label>Nom du restaurant *</label><input id="rName" placeholder="Ex : Restaurant Central"></div>
+   <div class="field"><label>Nom du serveur par défaut</label><input id="rServer" placeholder="Serveur"></div>
+   <div class="field"><label>Adresse</label><input id="rAddress" placeholder="Adresse complète"></div>
+   <div class="field"><label>Téléphone 1</label><input id="rPhone1" placeholder="06..."></div>
+   <div class="field"><label>Téléphone 2</label><input id="rPhone2" placeholder="05..."></div>
+   <div class="field"><label>Logo du restaurant</label><input id="rLogo" type="file" accept="image/*"></div>
   </div>
+  <div class="row"><img id="logoPreview" class="logo-preview" alt="Logo"><button class="primary" onclick="saveRestaurant()">Enregistrer le restaurant</button><button class="light" onclick="resetRestaurantForm()">Annuler</button></div>
+ </div>
+ <div class="panel"><h3>Mes restaurants</h3><div id="restaurantList"></div></div>
 </section>
 
-<section id="products" class="page">
-  <h2 class="page-title">Gestion des produits</h2>
-  <div class="card">
-    <h3 id="productFormTitle">Ajouter un produit</h3>
-    <input type="hidden" id="productId">
-    <div class="form-grid">
-      <div><label>Nom du produit</label><input id="pName" placeholder="Ex : Pizza Margherita"></div>
-      <div><label>Prix TTC (DH)</label><input id="pPrice" type="number" min="0" step="0.01"></div>
-      <div><label>Catégorie</label><select id="pCategory"></select></div>
-      <div><label>Photo du produit</label><input id="pImage" type="file" accept="image/*"></div>
-      <div class="full"><img id="pImagePreview" class="logo-preview hidden"></div>
-    </div>
-    <div class="row" style="margin-top:12px">
-      <button onclick="saveProduct()">Enregistrer le produit</button>
-      <button class="secondary" onclick="resetProductForm()">Annuler</button>
-    </div>
+<section class="page" id="page-menu">
+ <h1>Gestion du menu</h1><div class="subtitle">Les prix peuvent être adaptés librement à chaque restaurant.</div>
+ <div class="panel">
+  <h3>Ajouter / modifier un produit</h3>
+  <input type="hidden" id="productId">
+  <div class="grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+   <div class="field"><label>Nom du produit</label><input id="pName" placeholder="Nom du plat"></div>
+   <div class="field"><label>Catégorie</label><select id="pCategory"></select></div>
+   <div class="field"><label>Prix TTC (DH)</label><input id="pPrice" type="number" min="0" step=".5"></div>
   </div>
-  <div class="card">
-    <input id="productAdminSearch" placeholder="Rechercher..." oninput="renderProducts()">
-    <div class="table-wrap"><table><thead><tr><th>Photo</th><th>Produit</th><th>Catégorie</th><th>Prix TTC</th><th>Actions</th></tr></thead><tbody id="productsTable"></tbody></table></div>
-  </div>
+  <button class="primary" onclick="saveProduct()">Enregistrer le produit</button>
+  <button class="light" onclick="resetProductForm()">Annuler</button>
+ </div>
+ <div class="panel"><div class="row between"><h3>Catalogue</h3><button class="light smallbtn" onclick="resetDefaultMenu()">Réinitialiser le menu initial</button></div><div id="menuList"></div></div>
 </section>
 
-<section id="categories" class="page">
-  <h2 class="page-title">Catégories</h2>
-  <div class="card">
-    <label>Nouvelle catégorie</label>
-    <div class="row"><input id="newCategory" placeholder="Nom de la catégorie"><button onclick="addCategory()">Ajouter</button></div>
-  </div>
-  <div class="card" id="categoryListAdmin"></div>
+<section class="page" id="page-historique">
+ <h1>Historique des ventes</h1><div class="subtitle">Consultez, réimprimez ou modifiez la date et l'heure d'un ticket.</div>
+ <div class="panel">
+  <div class="row"><input type="date" id="historyDate" onchange="renderHistory()" style="max-width:200px"><button class="light" onclick="document.getElementById('historyDate').value='';renderHistory()">Toutes les dates</button></div>
+  <div id="historyList" style="margin-top:15px"></div>
+ </div>
 </section>
 
-<section id="history" class="page">
-  <h2 class="page-title">Historique des ventes</h2>
-  <div class="card">
-    <div class="form-grid">
-      <div><label>Du</label><input type="date" id="historyFrom" onchange="renderHistory()"></div>
-      <div><label>Au</label><input type="date" id="historyTo" onchange="renderHistory()"></div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="table-wrap"><table><thead><tr><th>N° Ticket</th><th>Date</th><th>Serveur</th><th>Paiement</th><th>Total TTC</th><th>Actions</th></tr></thead><tbody id="historyTable"></tbody></table></div>
-  </div>
+<section class="page" id="page-statistiques">
+ <h1>Tableau de bord</h1><div class="subtitle">Suivi des performances du restaurant sélectionné.</div>
+ <div class="grid">
+  <div class="stat"><small>Chiffre d'affaires TTC</small><strong id="sCA">0 DH</strong></div>
+  <div class="stat"><small>Nombre de tickets</small><strong id="sCount">0</strong></div>
+  <div class="stat"><small>Panier moyen</small><strong id="sAverage">0 DH</strong></div>
+  <div class="stat"><small>TVA collectée</small><strong id="sVAT">0 DH</strong></div>
+ </div>
+ <div class="panel" style="margin-top:18px"><h3>Ventes des 7 derniers jours</h3><div id="salesChart"></div></div>
+ <div class="panel"><h3>Dernières ventes</h3><div id="recentSales"></div></div>
 </section>
 
-<section id="restaurants" class="page">
-  <h2 class="page-title">Gestion des restaurants</h2>
-  <div class="card">
-    <h3 id="restaurantFormTitle">Créer un restaurant</h3>
-    <input type="hidden" id="restaurantId">
-    <div class="form-grid">
-      <div><label>Nom du restaurant</label><input id="rName"></div>
-      <div><label>Nom du serveur par défaut</label><input id="rServer"></div>
-      <div class="full"><label>Adresse</label><textarea id="rAddress" rows="2"></textarea></div>
-      <div><label>Téléphone 1</label><input id="rPhone"></div>
-      <div><label>Téléphone 2</label><input id="rPhone2"></div>
-      <div><label>Logo du restaurant</label><input id="rLogo" type="file" accept="image/*"></div>
-      <div><label>Modèle de ticket</label>
-        <select id="rTemplate"><option value="classic">Classique</option><option value="modern">Moderne</option><option value="compact">Compact</option></select>
-      </div>
-      <div class="full"><img id="rLogoPreview" class="logo-preview hidden"></div>
-    </div>
-    <div class="row" style="margin-top:12px">
-      <button onclick="saveRestaurant()">Enregistrer</button>
-      <button class="secondary" onclick="resetRestaurantForm()">Annuler</button>
-    </div>
-  </div>
-  <div class="card"><h3>Mes restaurants</h3><div id="restaurantsList"></div></div>
+<section class="page" id="page-parametres">
+ <h1>Paramètres et sauvegarde</h1><div class="subtitle">Configuration de l'application et de la synchronisation.</div>
+ <div class="panel">
+  <h3>Modèle de ticket</h3>
+  <div class="field"><label>Choisir le modèle par défaut</label><select id="defaultTicket"><option value="1">Modèle 1 – Classique</option><option value="2">Modèle 2 – Encadré</option><option value="3">Modèle 3 – Compact</option></select></div>
+  <button class="primary" onclick="saveSettings()">Enregistrer les paramètres</button>
+ </div>
+ <div class="panel">
+  <h3>Stockage et sauvegarde</h3>
+  <p style="font-size:13px;color:#68758a">Les données sont enregistrées sur cet appareil. Vous pouvez exporter une sauvegarde complète ou restaurer un fichier JSON.</p>
+  <div class="row"><button class="green" onclick="exportData()">Exporter mes données JSON</button><label class="light" style="padding:11px;border-radius:8px;cursor:pointer">Importer une sauvegarde<input type="file" accept=".json" onchange="importData(event)" hidden></label></div>
+  <p id="cloudStatus" style="font-size:12px;color:#68758a;margin-top:14px">Synchronisation cloud : non configurée.</p>
+ </div>
+ <div class="panel">
+  <h3>Configuration de la synchronisation en ligne (Supabase)</h3>
+  <div class="field"><label>URL du projet Supabase</label><input id="sbURL" placeholder="https://xxxx.supabase.co"></div>
+  <div class="field"><label>Clé publique anon</label><input id="sbKEY" placeholder="Clé publique du projet"></div>
+  <button class="primary" onclick="connectCloud()">Connecter le stockage en ligne</button>
+  <button class="light" onclick="syncCloud()">Synchroniser maintenant</button>
+  <p style="font-size:11px;color:#788397">La connexion nécessite la création de la table app_state dans Supabase et des règles d'accès adaptées. Ne mettez jamais une clé secrète ou service_role dans ce fichier public.</p>
+ </div>
+ <div class="panel"><h3>Informations</h3><p>POS RESTAURANT PRO – Gestion de caisse multi-restaurants.</p><p>Devise : Dirham marocain (MAD)</p><p>TVA : 20 %</p></div>
 </section>
-
-<section id="settings" class="page">
-  <h2 class="page-title">Paramètres</h2>
-  <div class="card">
-    <h3>Paramètres du ticket</h3>
-    <label><input type="checkbox" id="showServer" style="width:auto" onchange="saveReceiptSettings()"> Afficher le nom du serveur sur le ticket</label>
-    <label><input type="checkbox" id="showVat" style="width:auto" onchange="saveReceiptSettings()" checked> Afficher la TVA sur le ticket</label>
-    <label>Taux de TVA (%)</label>
-    <input id="vatRate" type="number" min="0" max="100" step="0.1" onchange="saveReceiptSettings()">
-    <p class="muted">Le taux par défaut est de 20 %.</p>
-  </div>
-  <div class="card">
-    <h3>Gestion des données</h3>
-    <p class="muted">Les données sont enregistrées dans le navigateur utilisé. Fais régulièrement une sauvegarde JSON.</p>
-    <button onclick="exportData()">Exporter mes données</button>
-    <button class="secondary" onclick="document.getElementById('restoreFile').click()">Importer une sauvegarde</button>
-  </div>
-</section>
-
-<section id="receiptPrint" class="hidden"></section>
 
 </main>
 </div>
 
+<div class="modal" id="ticketModal">
+ <div class="modalbox">
+  <div class="row between"><h2>Ticket de caisse</h2><button class="light smallbtn" onclick="closeTicket()">✕</button></div>
+  <div class="row"><div class="field" style="flex:1"><label>Modèle de ticket</label><select id="ticketStyle" onchange="renderTicket()"><option value="1">Classique</option><option value="2">Encadré</option><option value="3">Compact</option></select></div></div>
+  <div class="grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+   <div class="field"><label>Date du ticket</label><input id="ticketDate" type="date" onchange="renderTicket()"></div>
+   <div class="field"><label>Heure du ticket</label><input id="ticketTime" type="time" onchange="renderTicket()"></div>
+  </div>
+  <div id="ticketPreview"></div>
+  <div class="row" style="margin-top:15px"><button class="dark" style="flex:1" onclick="printTicket()">🖨️ Imprimer 80 mm</button><button class="primary" onclick="saveTicketDate()">Enregistrer date/heure</button></div>
+ </div>
+</div>
+
 <script>
-const STORAGE_KEY="restaurant_pos_pro_v1";
-const defaultCategories=["Entrées","Plats","Fast food","Pizza","Tajine","Boissons","Desserts"];
+// ======================================================
+// POS RESTAURANT PRO - APPLICATION
+// ======================================================
 
-const initialData={
-  restaurants:[{id:"rest1",name:"Mon Restaurant",address:"",phone:"",phone2:"",server:"Serveur",logo:"",template:"classic"}],
-  activeRestaurant:"rest1",
-  categories:[...defaultCategories],
-  products:[],
-  sales:[],
-  settings:{vatRate:20,showServer:true,showVat:true}
-};
+const CATEGORIES=["Entrées","Fast-food","Pizza","Tajine","Boissons","Desserts"];
 
-let db=loadData();
-let cart=[];
+const DEFAULT_PRODUCTS=[
+["Salade marocaine","Entrées",30],
+["Salade César","Entrées",28],
+["Salade grecque","Entrées",25],
+["Zaalouk","Entrées",25],
+["Taktouka","Entrées",25],
+["Harira","Entrées",18],
+["Pastilla au poulet","Entrées",50],
+["Assortiment de briouates","Entrées",45],
+
+["Burger classique","Fast-food",35],
+["Cheeseburger","Fast-food",40],
+["Chicken burger","Fast-food",40],
+["Shawarma poulet","Fast-food",45],
+["Pasticcio poulet","Fast-food",45],
+["Pasticcio viande hachée","Fast-food",55],
+["Tacos poulet","Fast-food",45],
+["Panini mixte","Fast-food",40],
+
+["Pizza Margherita","Pizza",52],
+["Pizza thon","Pizza",69],
+["Pizza poulet","Pizza",66],
+["Pizza Bolognaise","Pizza",69],
+["Pizza quatre saisons","Pizza",66],
+["Pizza quatre fromages","Pizza",75],
+["Pizza pepperoni","Pizza",70],
+["Pizza fruits de mer","Pizza",90],
+
+["Tajine poulet citron confit","Tajine",75],
+["Tajine kefta aux œufs","Tajine",70],
+["Tajine bœuf aux pruneaux","Tajine",95],
+["Tajine poulet daghmira","Tajine",69],
+["Tajine de crevettes Pil Pil","Tajine",75],
+["Tajine de viande aux légumes","Tajine",80],
+["Couscous au poulet","Tajine",90],
+["Couscous à la viande","Tajine",100],
+
+["Eau minérale 33 cl","Boissons",8],
+["Eau minérale 1,5 L","Boissons",15],
+["Eau gazeuse","Boissons",20],
+["Coca-Cola","Boissons",15],
+["Sprite","Boissons",15],
+["Fanta","Boissons",15],
+["Jus d'orange frais","Boissons",30],
+["Thé marocain","Boissons",25],
+
+["Tiramisu","Desserts",35],
+["Moelleux au chocolat","Desserts",60],
+["Tarte au citron","Desserts",40],
+["Salade de fruits","Desserts",25],
+["Crêpe chocolat","Desserts",30],
+["Cheesecake","Desserts",45],
+["Glace deux boules","Desserts",25],
+["Pâtisserie marocaine","Desserts",25]
+];
+
+const STORAGE_KEY="restaurantPOS_PRO_V3";
+let db=loadDB();
 let activeCategory="Tous";
-let tempProductImage="";
-let tempRestaurantLogo="";
+let cart=[];
+let currentTicket=null;
+let editingLogo="";
+let cloud=null;
 
-function loadData(){
-  try{
-    const saved=localStorage.getItem(STORAGE_KEY);
-    if(!saved)return structuredClone(initialData);
-    const d=JSON.parse(saved);
-    return {...structuredClone(initialData),...d,
-      settings:{...initialData.settings,...(d.settings||{})},
-      restaurants:d.restaurants?.length?d.restaurants:initialData.restaurants,
-      categories:d.categories?.length?d.categories:defaultCategories,
-      products:d.products||[],sales:d.sales||[]};
-  }catch(e){return structuredClone(initialData)}
+function loadDB(){
+ try{
+  const d=JSON.parse(localStorage.getItem(STORAGE_KEY));
+  if(d && Array.isArray(d.restaurants))return d;
+ }catch(e){}
+ return {restaurants:[],products:DEFAULT_PRODUCTS.map((p,i)=>({id:"p"+i,name:p[0],category:p[1],price:p[2]})),tickets:[],settings:{ticketStyle:"1"}};
 }
-function persist(){localStorage.setItem(STORAGE_KEY,JSON.stringify(db))}
-function money(n){return Number(n||0).toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2})+" DH"}
-function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function currentRestaurant(){return db.restaurants.find(r=>r.id===db.activeRestaurant)||db.restaurants[0]}
-function dateInputValue(d=new Date()){
- const z=n=>String(n).padStart(2,"0");
- return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}T${z(d.getHours())}:${z(d.getMinutes())}`;
+function persist(){
+ localStorage.setItem(STORAGE_KEY,JSON.stringify(db));
+ updateTop();
 }
-function formatDate(d){return new Date(d).toLocaleString("fr-FR")}
-function showPage(id){
+function money(n){return Number(n||0).toLocaleString("fr-MA",{minimumFractionDigits:2,maximumFractionDigits:2})+" DH"}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function active(){return db.restaurants.find(r=>r.id===document.getElementById("activeRestaurant").value)||db.restaurants[0]}
+function tickets(){let r=active();return db.tickets.filter(t=>!r||t.restaurantId===r.id)}
+function totals(items){
+ const ttc=items.reduce((s,i)=>s+i.price*i.qty,0);
+ return {ttc,ht:ttc/1.2,vat:ttc-ttc/1.2};
+}
+function updateTop(){
+ const r=active();
+ document.getElementById("topRestaurant").textContent=r?r.name:"Aucun restaurant sélectionné";
+}
+function init(){
+ document.getElementById("pCategory").innerHTML=CATEGORIES.map(c=>`<option>${c}</option>`).join("");
+ document.querySelectorAll(".nav").forEach(b=>b.onclick=()=>showPage(b.dataset.page,b));
+ document.getElementById("activeRestaurant").onchange=()=>{
+  cart=[];renderAll();
+  document.getElementById("serverName").value=active()?.server||"";
+ };
+ document.getElementById("defaultTicket").value=db.settings.ticketStyle||"1";
+ renderAll();
+ if(db.restaurants.length===0)showPage("restaurants",document.querySelector('[data-page="restaurants"]'));
+ setInterval(()=>document.getElementById("clock").textContent=new Date().toLocaleString("fr-MA"),1000);
+}
+function showPage(name,btn){
  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
- document.getElementById(id).classList.add("active");
- document.querySelectorAll(".sidebar button[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
- if(id==="dashboard")renderDashboard();
- if(id==="pos")renderPOS();
- if(id==="products")renderProducts();
- if(id==="categories")renderCategories();
- if(id==="history")renderHistory();
- if(id==="restaurants")renderRestaurants();
- if(id==="settings")loadSettings();
+ document.getElementById("page-"+name).classList.add("active");
+ document.querySelectorAll(".nav").forEach(b=>b.classList.remove("active"));
+ (btn||document.querySelector(`[data-page="${name}"]`))?.classList.add("active");
+ renderAll();
 }
-function refreshAll(){
- renderRestaurantSelector();
- renderDashboard();
- renderPOS();
- renderProducts();
- renderCategories();
- renderHistory();
- renderRestaurants();
- loadSettings();
+function renderAll(){
+ renderRestaurantSelect();renderRestaurants();renderCategoryBar();renderProducts();renderCart();renderMenu();renderHistory();renderStats();updateTop();
 }
-function renderRestaurantSelector(){
- const s=document.getElementById("restaurantSelector");
- s.innerHTML=db.restaurants.map(r=>`<option value="${esc(r.id)}" ${r.id===db.activeRestaurant?"selected":""}>${esc(r.name)}</option>`).join("");
+function renderRestaurantSelect(){
+ const s=document.getElementById("activeRestaurant"),old=s.value;
+ s.innerHTML=db.restaurants.map(r=>`<option value="${r.id}">${esc(r.name)}</option>`).join("");
+ if(db.restaurants.some(r=>r.id===old))s.value=old;
+ if(!s.value&&db.restaurants.length)s.value=db.restaurants[0].id;
+ document.getElementById("serverName").value=active()?.server||"";
 }
-function changeRestaurant(id){
- db.activeRestaurant=id;persist();cart=[];refreshAll();
+function renderRestaurants(){
+ document.getElementById("restaurantList").innerHTML=db.restaurants.length?`<div class="tablewrap"><table><thead><tr><th>Logo</th><th>Restaurant</th><th>Adresse</th><th>Téléphones</th><th>Actions</th></tr></thead><tbody>${db.restaurants.map(r=>`<tr><td>${r.logo?`<img src="${r.logo}" width="40">`:"—"}</td><td><strong>${esc(r.name)}</strong><br><small>${esc(r.server||"")}</small></td><td>${esc(r.address||"")}</td><td>${esc(r.phone1||"")}<br>${esc(r.phone2||"")}</td><td><button class="light smallbtn" onclick="editRestaurant('${r.id}')">Modifier</button> <button class="danger smallbtn" onclick="deleteRestaurant('${r.id}')">Supprimer</button></td></tr>`).join("")}</tbody></table></div>`:'<div class="empty">Aucun restaurant créé.</div>';
 }
-function renderDashboard(){
- const today=new Date().toDateString();
- const sales=db.sales.filter(s=>s.restaurantId===db.activeRestaurant);
- const todaySales=sales.filter(s=>new Date(s.date).toDateString()===today);
- document.getElementById("todayRevenue").textContent=money(todaySales.reduce((a,s)=>a+s.total,0));
- document.getElementById("todayCount").textContent=todaySales.length;
- document.getElementById("allRevenue").textContent=money(sales.reduce((a,s)=>a+s.total,0));
- document.getElementById("productCount").textContent=db.products.filter(p=>p.restaurantId===db.activeRestaurant).length;
- document.getElementById("recentSales").innerHTML=sales.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,8).map(s=>`<tr><td>${esc(s.number)}</td><td>${formatDate(s.date)}</td><td>${money(s.total)}</td><td>${esc(s.payment)}</td></tr>`).join("")||'<tr><td colspan="4">Aucune vente.</td></tr>';
+function resetRestaurantForm(){
+ ["restaurantId","rName","rServer","rAddress","rPhone1","rPhone2","rLogo"].forEach(id=>document.getElementById(id).value="");
+ editingLogo="";document.getElementById("logoPreview").src="";
+ document.getElementById("restaurantFormTitle").textContent="Ajouter un restaurant";
 }
-function productForRestaurant(p){return !p.restaurantId||p.restaurantId===db.activeRestaurant}
-function renderPOS(){
- const r=currentRestaurant();
- document.getElementById("serverInput").value=r.server||"";
- document.getElementById("saleDate").value=dateInputValue();
- const cats=["Tous",...db.categories];
- document.getElementById("posCategories").innerHTML=cats.map(c=>`<button class="${activeCategory===c?"active":""}" onclick="selectCategory('${esc(c)}')">${esc(c)}</button>`).join("");
- renderFood();renderCart();
+function editRestaurant(id){
+ const r=db.restaurants.find(x=>x.id===id);if(!r)return;
+ document.getElementById("restaurantId").value=id;
+ document.getElementById("rName").value=r.name;
+ document.getElementById("rServer").value=r.server||"";
+ document.getElementById("rAddress").value=r.address||"";
+ document.getElementById("rPhone1").value=r.phone1||"";
+ document.getElementById("rPhone2").value=r.phone2||"";
+ editingLogo=r.logo||"";document.getElementById("logoPreview").src=editingLogo;
+ document.getElementById("restaurantFormTitle").textContent="Modifier le restaurant";
+ showPage("restaurants");
 }
-function selectCategory(c){activeCategory=c;renderPOS()}
-function renderFood(){
- const search=(document.getElementById("productSearch").value||"").toLowerCase();
- const products=db.products.filter(p=>productForRestaurant(p)&&
- (activeCategory==="Tous"||p.category===activeCategory)&&
- p.name.toLowerCase().includes(search));
- document.getElementById("foodGrid").innerHTML=products.map(p=>`
- <div class="food-card" onclick="addToCart('${p.id}')">
- <img src="${p.image||'https://placehold.co/300x160?text=Produit'}" alt="">
- <div class="food-info"><strong>${esc(p.name)}</strong><span>${money(p.price)}</span></div>
- </div>`).join("")||'<p class="muted">Aucun produit dans cette catégorie.</p>';
+document.getElementById("rLogo").addEventListener("change",e=>{
+ const f=e.target.files[0];if(!f)return;
+ if(f.size>700000){alert("Image trop lourde. Choisissez un logo de moins de 700 Ko.");return;}
+ const rd=new FileReader();rd.onload=()=>{editingLogo=rd.result;document.getElementById("logoPreview").src=editingLogo};rd.readAsDataURL(f);
+});
+function saveRestaurant(){
+ const name=document.getElementById("rName").value.trim();if(!name){alert("Le nom du restaurant est obligatoire.");return}
+ const id=document.getElementById("restaurantId").value;
+ const data={id:id||uid(),name,server:document.getElementById("rServer").value.trim(),address:document.getElementById("rAddress").value.trim(),phone1:document.getElementById("rPhone1").value.trim(),phone2:document.getElementById("rPhone2").value.trim(),logo:editingLogo};
+ if(id){db.restaurants=db.restaurants.map(r=>r.id===id?data:r)}
+ else db.restaurants.push(data);
+ persist();resetRestaurantForm();renderAll();alert("Restaurant enregistré.");
+}
+function deleteRestaurant(id){
+ if(!confirm("Supprimer ce restaurant et ses tickets ?"))return;
+ db.restaurants=db.restaurants.filter(r=>r.id!==id);
+ db.tickets=db.tickets.filter(t=>t.restaurantId!==id);
+ persist();renderAll();
+}
+function renderCategoryBar(){
+ document.getElementById("categoryBar").innerHTML=["Tous",...CATEGORIES].map(c=>`<button class="${activeCategory===c?"active":""}" onclick="setCategory('${c}')">${c}</button>`).join("");
+}
+function setCategory(c){activeCategory=c;renderCategoryBar();renderProducts()}
+function renderProducts(){
+ const q=document.getElementById("productSearch").value.toLowerCase();
+ const ps=db.products.filter(p=>(activeCategory==="Tous"||p.category===activeCategory)&&p.name.toLowerCase().includes(q));
+ document.getElementById("productsGrid").innerHTML=ps.map(p=>`<button class="product" onclick="addToCart('${p.id}')"><strong>${esc(p.name)}</strong><span>${money(p.price)}</span><small>${esc(p.category)}</small></button>`).join("")||'<div class="empty">Aucun produit trouvé.</div>';
 }
 function addToCart(id){
- const p=db.products.find(x=>x.id===id);
- if(!p)return;
- const line=cart.find(x=>x.productId===id);
- if(line)line.qty++;else cart.push({productId:p.id,name:p.name,price:Number(p.price),qty:1});
+ const p=db.products.find(x=>x.id===id);if(!p)return;
+ const i=cart.find(x=>x.id===id);if(i)i.qty++;else cart.push({...p,qty:1});
  renderCart();
 }
-function updateQty(id,delta){
- const line=cart.find(x=>x.productId===id);if(!line)return;
- line.qty+=delta;if(line.qty<=0)cart=cart.filter(x=>x.productId!==id);
+function changeQty(id,d){
+ const i=cart.find(x=>x.id===id);if(!i)return;
+ i.qty+=d;if(i.qty<=0)cart=cart.filter(x=>x.id!==id);
  renderCart();
 }
 function clearCart(){cart=[];renderCart()}
-function totals(){
- const total=cart.reduce((a,x)=>a+x.price*x.qty,0);
- const rate=Number(db.settings.vatRate)||0;
- const ht=total/(1+rate/100);
- return {ttc:total,ht,vat:total-ht};
-}
 function renderCart(){
- document.getElementById("cartItems").innerHTML=cart.map(x=>`
- <div class="cart-line"><div><strong>${esc(x.name)}</strong><br>${money(x.price)} × ${x.qty}</div>
- <div class="row" style="flex:0 0 auto"><button class="small secondary" onclick="updateQty('${x.productId}',-1)">−</button><b>${x.qty}</b><button class="small" onclick="updateQty('${x.productId}',1)">+</button></div></div>`).join("")||'<p class="muted">Le panier est vide.</p>';
- const t=totals();
- document.getElementById("subtotal").textContent=money(t.ht);
- document.getElementById("vat").textContent=money(t.vat);
- document.getElementById("total").textContent=money(t.ttc);
-}
-function completeSale(){
- if(!cart.length){alert("Le panier est vide.");return}
- const date=document.getElementById("saleDate").value;
- if(!date){alert("Veuillez choisir la date du ticket.");return}
- const r=currentRestaurant();
- const t=totals();
- const sale={
-  id:crypto.randomUUID(),number:"T"+Date.now().toString().slice(-8),
-  restaurantId:r.id,restaurantName:r.name,
-  date:new Date(date).toISOString(),
-  server:document.getElementById("serverInput").value.trim(),
-  payment:document.getElementById("paymentMethod").value,
-  items:cart.map(x=>({...x})),ht:t.ht,vat:t.vat,total:t.ttc,
-  vatRate:Number(db.settings.vatRate)||0
- };
- db.sales.push(sale);persist();cart=[];
- renderCart();renderDashboard();renderHistory();
- printReceipt(sale);
-}
-function renderProducts(){
- const q=(document.getElementById("productAdminSearch")?.value||"").toLowerCase();
- const list=db.products.filter(p=>productForRestaurant(p)&&p.name.toLowerCase().includes(q));
- document.getElementById("productsTable").innerHTML=list.map(p=>`<tr>
- <td>${p.image?`<img src="${p.image}" style="width:45px;height:35px;object-fit:cover">`:"—"}</td>
- <td>${esc(p.name)}</td><td>${esc(p.category)}</td><td>${money(p.price)}</td>
- <td><button class="small" onclick="editProduct('${p.id}')">Modifier</button> <button class="small danger" onclick="deleteProduct('${p.id}')">Supprimer</button></td>
- </tr>`).join("")||'<tr><td colspan="5">Aucun produit.</td></tr>';
- document.getElementById("pCategory").innerHTML=db.categories.map(c=>`<option>${esc(c)}</option>`).join("");
+ document.getElementById("cartItems").innerHTML=cart.length?cart.map(i=>`<div class="cartitem"><div class="row between"><strong>${esc(i.name)}</strong><strong>${money(i.price*i.qty)}</strong></div><div class="qty"><button onclick="changeQty('${i.id}',-1)">−</button><span>${i.qty}</span><button onclick="changeQty('${i.id}',1)">+</button><small>${money(i.price)} / unité</small></div></div>`).join(""):'<div class="empty">Aucun article</div>';
+ const t=totals(cart);
+ document.getElementById("cartHT").textContent=money(t.ht);
+ document.getElementById("cartVAT").textContent=money(t.vat);
+ document.getElementById("cartTTC").textContent=money(t.ttc);
 }
 function saveProduct(){
- const id=document.getElementById("productId").value;
- const name=document.getElementById("pName").value.trim();
- const price=Number(document.getElementById("pPrice").value);
- const category=document.getElementById("pCategory").value;
- if(!name||!Number.isFinite(price)||price<0){alert("Veuillez saisir un nom et un prix valides.");return}
- const old=db.products.find(p=>p.id===id);
- const product={id:id||crypto.randomUUID(),name,price,category,image:tempProductImage||old?.image||"",restaurantId:db.activeRestaurant};
- if(old)Object.assign(old,product);else db.products.push(product);
- persist();resetProductForm();renderProducts();renderPOS();renderDashboard();
+ const name=document.getElementById("pName").value.trim(),price=Number(document.getElementById("pPrice").value),category=document.getElementById("pCategory").value,id=document.getElementById("productId").value;
+ if(!name||!Number.isFinite(price)||price<0){alert("Vérifiez le nom et le prix.");return}
+ const p={id:id||uid(),name,price,category};
+ if(id)db.products=db.products.map(x=>x.id===id?p:x);else db.products.push(p);
+ persist();resetProductForm();renderAll();
 }
+function resetProductForm(){["productId","pName","pPrice"].forEach(id=>document.getElementById(id).value="")}
 function editProduct(id){
  const p=db.products.find(x=>x.id===id);if(!p)return;
  document.getElementById("productId").value=p.id;
  document.getElementById("pName").value=p.name;
  document.getElementById("pPrice").value=p.price;
  document.getElementById("pCategory").value=p.category;
- tempProductImage=p.image||"";
- document.getElementById("pImagePreview").src=tempProductImage;
- document.getElementById("pImagePreview").classList.toggle("hidden",!tempProductImage);
- document.getElementById("productFormTitle").textContent="Modifier le produit";
- window.scrollTo(0,0);
+ showPage("menu");
 }
 function deleteProduct(id){
  if(!confirm("Supprimer ce produit ?"))return;
- db.products=db.products.filter(p=>p.id!==id);persist();renderProducts();renderPOS();renderDashboard();
+ db.products=db.products.filter(p=>p.id!==id);persist();renderAll();
 }
-function resetProductForm(){
- document.getElementById("productId").value="";
- document.getElementById("pName").value="";
- document.getElementById("pPrice").value="";
- document.getElementById("pImage").value="";
- document.getElementById("productFormTitle").textContent="Ajouter un produit";
- tempProductImage="";
- document.getElementById("pImagePreview").classList.add("hidden");
+function renderMenu(){
+ document.getElementById("menuList").innerHTML=CATEGORIES.map(c=>{
+ const arr=db.products.filter(p=>p.category===c);
+ return `<h3 style="margin-top:18px">${c} (${arr.length})</h3><div class="tablewrap"><table><thead><tr><th>Produit</th><th>Prix TTC</th><th>Actions</th></tr></thead><tbody>${arr.map(p=>`<tr><td>${esc(p.name)}</td><td>${money(p.price)}</td><td><button class="light smallbtn" onclick="editProduct('${p.id}')">Modifier</button> <button class="danger smallbtn" onclick="deleteProduct('${p.id}')">Supprimer</button></td></tr>`).join("")}</tbody></table></div>`;
+ }).join("");
 }
-document.getElementById("pImage").addEventListener("change",e=>readImage(e.target.files[0],v=>{
- tempProductImage=v;document.getElementById("pImagePreview").src=v;document.getElementById("pImagePreview").classList.remove("hidden");
-}));
-function addCategory(){
- const name=document.getElementById("newCategory").value.trim();
- if(!name)return;
- if(db.categories.some(c=>c.toLowerCase()===name.toLowerCase())){alert("Cette catégorie existe déjà.");return}
- db.categories.push(name);document.getElementById("newCategory").value="";
- persist();renderCategories();renderProducts();renderPOS();
+function resetDefaultMenu(){
+ if(!confirm("Remplacer le catalogue par les 48 produits initiaux ?"))return;
+ db.products=DEFAULT_PRODUCTS.map((p,i)=>({id:"p"+uid()+i,name:p[0],category:p[1],price:p[2]}));persist();renderAll();
 }
-function renderCategories(){
- document.getElementById("categoryListAdmin").innerHTML=db.categories.map(c=>`<div class="row" style="padding:8px;border-bottom:1px solid var(--border)"><strong>${esc(c)}</strong><button class="small danger" style="flex:0 0 auto" onclick="deleteCategory('${esc(c)}')">Supprimer</button></div>`).join("");
+function checkout(){
+ const r=active();if(!r){alert("Créez d'abord un restaurant.");showPage("restaurants");return}
+ if(!cart.length){alert("Ajoutez au moins un produit.");return}
+ const t=totals(cart),now=new Date();
+ currentTicket={id:uid(),number:"T-"+Date.now().toString().slice(-8),restaurantId:r.id,restaurantName:r.name,restaurantAddress:r.address,phone1:r.phone1,phone2:r.phone2,logo:r.logo,server:document.getElementById("serverName").value||r.server||"",items:cart.map(x=>({...x})),ht:t.ht,vat:t.vat,ttc:t.ttc,payment:document.getElementById("payment").value,orderType:document.getElementById("orderType").value,date:now.toISOString().slice(0,10),time:now.toTimeString().slice(0,5),style:db.settings.ticketStyle||"1"};
+ db.tickets.unshift(currentTicket);persist();cart=[];renderAll();openTicket(currentTicket);
 }
-function deleteCategory(c){
- if(db.products.some(p=>p.category===c&&productForRestaurant(p))){alert("Cette catégorie contient encore des produits. Déplace ou supprime ces produits d'abord.");return}
- if(!confirm("Supprimer la catégorie "+c+" ?"))return;
- db.categories=db.categories.filter(x=>x!==c);persist();renderCategories();renderProducts();renderPOS();
+function openTicket(t){
+ currentTicket=t;
+ document.getElementById("ticketStyle").value=t.style||db.settings.ticketStyle||"1";
+ document.getElementById("ticketDate").value=t.date;
+ document.getElementById("ticketTime").value=t.time;
+ renderTicket();document.getElementById("ticketModal").classList.add("open");
 }
+function renderTicket(){
+ if(!currentTicket)return;
+ const t=currentTicket,style=document.getElementById("ticketStyle").value;
+ const date=document.getElementById("ticketDate").value||t.date;
+ const time=document.getElementById("ticketTime").value||t.time;
+ const klass=style==="2"?"ticket-design-2":style==="3"?"ticket-design-3":"";
+ document.getElementById("ticketPreview").innerHTML=`<div class="ticket ${klass}">
+ <div class="${style==="1"?"center":""}">
+ ${t.logo?`<img src="${t.logo}">`:""}
+ <h2>${esc(t.restaurantName)}</h2>
+ ${t.restaurantAddress?`<div>${esc(t.restaurantAddress)}</div>`:""}
+ ${t.phone1?`<div>Tél: ${esc(t.phone1)}</div>`:""}
+ ${t.phone2?`<div>${esc(t.phone2)}</div>`:""}
+ </div>
+ <div class="line"></div>
+ <div>Ticket : ${esc(t.number)}</div>
+ <div>Date : ${date} ${time}</div>
+ <div>Serveur : ${esc(t.server||"—")}</div>
+ <div>Commande : ${esc(t.orderType||"Sur place")}</div>
+ <div class="line"></div>
+ <table><thead><tr><th>Article</th><th>Qté</th><th>Prix</th></tr></thead>
+ <tbody>${t.items.map(i=>`<tr><td>${esc(i.name)}</td><td>${i.qty}</td><td>${money(i.price*i.qty)}</td></tr>`).join("")}</tbody></table>
+ <div class="line"></div>
+ <div class="totalrow"><span>Total HT</span><strong>${money(t.ht)}</strong></div>
+ <div class="totalrow"><span>TVA 20%</span><strong>${money(t.vat)}</strong></div>
+ <div class="totalrow t-total"><span>TOTAL TTC</span><strong>${money(t.ttc)}</strong></div>
+ <div class="line"></div>
+ <div>Paiement : ${esc(t.payment)}</div>
+ <div class="center" style="margin-top:15px">Merci de votre visite !<br>À bientôt</div>
+ </div>`;
+}
+function saveTicketDate(){
+ if(!currentTicket)return;
+ currentTicket.date=document.getElementById("ticketDate").value;
+ currentTicket.time=document.getElementById("ticketTime").value;
+ currentTicket.style=document.getElementById("ticketStyle").value;
+ const i=db.tickets.findIndex(x=>x.id===currentTicket.id);
+ if(i>=0)db.tickets[i]=currentTicket;
+ persist();renderHistory();renderTicket();alert("Ticket mis à jour.");
+}
+function printTicket(){renderTicket();window.print()}
+function closeTicket(){document.getElementById("ticketModal").classList.remove("open")}
 function renderHistory(){
- const from=document.getElementById("historyFrom").value;
- const to=document.getElementById("historyTo").value;
- const list=db.sales.filter(s=>s.restaurantId===db.activeRestaurant)
- .filter(s=>!from||s.date.slice(0,10)>=from).filter(s=>!to||s.date.slice(0,10)<=to)
- .slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
- document.getElementById("historyTable").innerHTML=list.map(s=>`<tr>
- <td>${esc(s.number)}</td><td>${formatDate(s.date)}</td><td>${esc(s.server)}</td><td>${esc(s.payment)}</td><td>${money(s.total)}</td>
- <td><button class="small" onclick="editSaleDate('${s.id}')">Date</button> <button class="small" onclick="reprintSale('${s.id}')">Ticket</button> <button class="small danger" onclick="deleteSale('${s.id}')">×</button></td>
- </tr>`).join("")||'<tr><td colspan="6">Aucune vente trouvée.</td></tr>';
+ const date=document.getElementById("historyDate").value;
+ const arr=tickets().filter(t=>!date||t.date===date);
+ document.getElementById("historyList").innerHTML=arr.length?`<div class="tablewrap"><table><thead><tr><th>Ticket</th><th>Date / heure</th><th>Serveur</th><th>Paiement</th><th>Total TTC</th><th>Actions</th></tr></thead><tbody>${arr.map(t=>`<tr><td>${esc(t.number)}</td><td>${t.date} ${t.time}</td><td>${esc(t.server||"")}</td><td>${esc(t.payment)}</td><td><strong>${money(t.ttc)}</strong></td><td><button class="light smallbtn" onclick="openTicketById('${t.id}')">Voir / imprimer</button></td></tr>`).join("")}</tbody></table></div>`:'<div class="empty">Aucune vente pour cette période.</div>';
 }
-function editSaleDate(id){
- const s=db.sales.find(x=>x.id===id);if(!s)return;
- const newDate=prompt("Nouvelle date et heure (AAAA-MM-JJTHH:MM)",dateInputValue(new Date(s.date)));
- if(!newDate)return;
- const d=new Date(newDate);if(isNaN(d)){alert("Date invalide.");return}
- s.date=d.toISOString();persist();renderHistory();renderDashboard();
+function openTicketById(id){const t=db.tickets.find(x=>x.id===id);if(t)openTicket(t)}
+function renderStats(){
+ const arr=tickets(),sum=arr.reduce((s,t)=>s+t.ttc,0),vat=arr.reduce((s,t)=>s+t.vat,0);
+ document.getElementById("sCA").textContent=money(sum);
+ document.getElementById("sCount").textContent=arr.length;
+ document.getElementById("sAverage").textContent=money(arr.length?sum/arr.length:0);
+ document.getElementById("sVAT").textContent=money(vat);
+ const days=[];
+ for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const key=d.toISOString().slice(0,10);days.push({key,label:d.toLocaleDateString("fr-MA",{weekday:"short",day:"2-digit"}),value:arr.filter(t=>t.date===key).reduce((s,t)=>s+t.ttc,0)})}
+ const max=Math.max(1,...days.map(d=>d.value));
+ document.getElementById("salesChart").innerHTML=days.map(d=>`<div style="display:grid;grid-template-columns:65px 1fr 95px;gap:8px;align-items:center;margin:10px 0;font-size:12px"><span>${d.label}</span><div style="height:15px;background:#edf1f6;border-radius:5px;overflow:hidden"><div style="height:100%;width:${d.value/max*100}%;background:#d69b35"></div></div><strong>${money(d.value)}</strong></div>`).join("");
+ document.getElementById("recentSales").innerHTML=arr.slice(0,5).map(t=>`<div class="row between" style="padding:9px;border-bottom:1px solid var(--border)"><span>${t.date} · ${esc(t.number)}</span><strong>${money(t.ttc)}</strong></div>`).join("")||'<div class="empty">Aucune vente.</div>';
 }
-function deleteSale(id){
- if(!confirm("Supprimer définitivement ce ticket ?"))return;
- db.sales=db.sales.filter(s=>s.id!==id);persist();renderHistory();renderDashboard();
-}
-function reprintSale(id){const s=db.sales.find(x=>x.id===id);if(s)printReceipt(s)}
-function renderRestaurants(){
- document.getElementById("restaurantsList").innerHTML=db.restaurants.map(r=>`
- <div class="row" style="border-bottom:1px solid var(--border);padding:10px 0">
- <div><strong>${esc(r.name)}</strong><br><span class="muted">${esc(r.address||"Adresse non renseignée")}</span></div>
- <button class="small" style="flex:0 0 auto" onclick="editRestaurant('${r.id}')">Modifier</button>
- <button class="small danger" style="flex:0 0 auto" onclick="deleteRestaurant('${r.id}')">Supprimer</button>
- </div>`).join("");
-}
-function saveRestaurant(){
- const id=document.getElementById("restaurantId").value;
- const name=document.getElementById("rName").value.trim();
- if(!name){alert("Le nom du restaurant est obligatoire.");return}
- const old=db.restaurants.find(r=>r.id===id);
- const r={id:id||crypto.randomUUID(),name,
-  server:document.getElementById("rServer").value.trim(),
-  address:document.getElementById("rAddress").value.trim(),
-  phone:document.getElementById("rPhone").value.trim(),
-  phone2:document.getElementById("rPhone2").value.trim(),
-  logo:tempRestaurantLogo||old?.logo||"",
-  template:document.getElementById("rTemplate").value};
- if(old)Object.assign(old,r);else db.restaurants.push(r);
- db.activeRestaurant=r.id;persist();resetRestaurantForm();refreshAll();
-}
-function editRestaurant(id){
- const r=db.restaurants.find(x=>x.id===id);if(!r)return;
- document.getElementById("restaurantId").value=r.id;
- document.getElementById("rName").value=r.name;
- document.getElementById("rServer").value=r.server||"";
- document.getElementById("rAddress").value=r.address||"";
- document.getElementById("rPhone").value=r.phone||"";
- document.getElementById("rPhone2").value=r.phone2||"";
- document.getElementById("rTemplate").value=r.template||"classic";
- tempRestaurantLogo=r.logo||"";
- document.getElementById("rLogoPreview").src=tempRestaurantLogo;
- document.getElementById("rLogoPreview").classList.toggle("hidden",!tempRestaurantLogo);
- document.getElementById("restaurantFormTitle").textContent="Modifier le restaurant";
- window.scrollTo(0,0);
-}
-function deleteRestaurant(id){
- if(db.restaurants.length<=1){alert("Il faut conserver au moins un restaurant.");return}
- if(!confirm("Supprimer ce restaurant ? Ses tickets historiques seront conservés."))return;
- db.restaurants=db.restaurants.filter(r=>r.id!==id);
- if(db.activeRestaurant===id)db.activeRestaurant=db.restaurants[0].id;
- persist();refreshAll();
-}
-function resetRestaurantForm(){
- ["restaurantId","rName","rServer","rAddress","rPhone","rPhone2"].forEach(id=>document.getElementById(id).value="");
- document.getElementById("rLogo").value="";
- document.getElementById("restaurantFormTitle").textContent="Créer un restaurant";
- document.getElementById("rLogoPreview").classList.add("hidden");tempRestaurantLogo="";
-}
-document.getElementById("rLogo").addEventListener("change",e=>readImage(e.target.files[0],v=>{
- tempRestaurantLogo=v;document.getElementById("rLogoPreview").src=v;document.getElementById("rLogoPreview").classList.remove("hidden");
-}));
-function readImage(file,callback){
- if(!file)return;
- if(file.size>3*1024*1024){alert("Image trop volumineuse. Choisis une image de moins de 3 Mo.");return}
- const reader=new FileReader();
- reader.onload=()=>callback(reader.result);
- reader.readAsDataURL(file);
-}
-function loadSettings(){
- document.getElementById("vatRate").value=db.settings.vatRate;
- document.getElementById("showServer").checked=db.settings.showServer;
- document.getElementById("showVat").checked=db.settings.showVat;
-}
-function saveReceiptSettings(){
- db.settings.vatRate=Math.max(0,Number(document.getElementById("vatRate").value)||0);
- db.settings.showServer=document.getElementById("showServer").checked;
- db.settings.showVat=document.getElementById("showVat").checked;
- persist();renderCart();
-}
-function printReceipt(sale){
- const r=db.restaurants.find(x=>x.id===sale.restaurantId)||currentRestaurant();
- const template=r.template||"classic";
- const date=formatDate(sale.date);
- const rows=sale.items.map(x=>`<tr><td>${esc(x.name)}<br><small>${x.qty} × ${money(x.price)}</small></td><td style="text-align:right">${money(x.qty*x.price)}</td></tr>`).join("");
- const logo=r.logo?`<img src="${r.logo}" style="max-width:110px;max-height:65px;object-fit:contain;margin-bottom:8px">`:"";
- const server=db.settings.showServer&&sale.server?`<p>Serveur : ${esc(sale.server)}</p>`:"";
- const vat=db.settings.showVat?`<p>TVA (${sale.vatRate}%) : ${money(sale.vat)}</p>`:"";
- const style=template==="modern"?"font-family:Arial;border:1px solid #ddd;padding:16px;border-radius:10px":template==="compact"?"font-family:monospace;font-size:12px":"font-family:Arial";
- const area=document.getElementById("receiptPrint");
- area.innerHTML=`<div style="${style};max-width:360px;margin:auto;color:#111">
- <div style="text-align:center">${logo}<h2 style="margin:5px">${esc(r.name)}</h2>
- <p>${esc(r.address||"")}</p><p>${esc(r.phone||"")}${r.phone2?" / "+esc(r.phone2):""}</p>
- <hr><h3>FACTURE / TICKET</h3><p>N° ${esc(sale.number)}</p><p>${date}</p>${server}</div>
- <hr><table style="width:100%;font-size:13px"><tbody>${rows}</tbody></table><hr>
- <p>Sous-total HT : ${money(sale.ht)}</p>${vat}
- <h2 style="text-align:right">TOTAL TTC : ${money(sale.total)}</h2>
- <p>Mode de paiement : ${esc(sale.payment)}</p>
- <hr><p style="text-align:center">Merci pour votre visite !</p></div>`;
- document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
- area.classList.remove("hidden");
- setTimeout(()=>window.print(),250);
- window.onafterprint=()=>{
-  area.classList.add("hidden");
-  showPage("pos");
- };
+function saveSettings(){
+ db.settings.ticketStyle=document.getElementById("defaultTicket").value;persist();alert("Paramètres enregistrés.");
 }
 function exportData(){
  const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"});
- const url=URL.createObjectURL(blob);
- const a=document.createElement("a");a.href=url;a.download="POS-Restaurant-Backup.json";a.click();
- URL.revokeObjectURL(url);
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="POS-RESTAURANT-PRO-backup.json";a.click();URL.revokeObjectURL(a.href);
 }
-function restoreData(event){
- const file=event.target.files[0];if(!file)return;
- const reader=new FileReader();
- reader.onload=()=>{
-  try{
-   const d=JSON.parse(reader.result);
-   if(!d.restaurants||!d.products||!d.sales)throw new Error("Format incorrect");
-   if(!confirm("Remplacer les données actuelles par cette sauvegarde ?"))return;
-   db={...structuredClone(initialData),...d};persist();refreshAll();alert("Sauvegarde restaurée.");
-  }catch(e){alert("Fichier de sauvegarde invalide.")}
-  event.target.value="";
- };
- reader.readAsText(file);
+function importData(e){
+ const f=e.target.files[0];if(!f)return;
+ const rd=new FileReader();rd.onload=()=>{
+ try{const d=JSON.parse(rd.result);if(!Array.isArray(d.restaurants)||!Array.isArray(d.products)||!Array.isArray(d.tickets))throw Error();db=d;persist();renderAll();alert("Sauvegarde restaurée.");}
+ catch(err){alert("Fichier de sauvegarde invalide.");}
+ };rd.readAsText(f);
 }
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 
-// Initialisation
-document.getElementById("saleDate").value=dateInputValue();
-refreshAll();
+// ======================================================
+// SYNCHRONISATION SUPABASE - STOCKAGE EN LIGNE
+// ======================================================
+
+async function connectCloud(){
+ const url=document.getElementById("sbURL").value.trim();
+ const key=document.getElementById("sbKEY").value.trim();
+ if(!url||!key){alert("Saisissez l'URL et la clé publique Supabase.");return}
+ try{
+  cloud=window.supabase.createClient(url,key);
+  const {error}=await cloud.from("app_state").select("id").eq("id","main").maybeSingle();
+  if(error)throw error;
+  localStorage.setItem("pos_sb_url",url);
+  localStorage.setItem("pos_sb_key",key);
+  document.getElementById("cloudStatus").textContent="Supabase connecté. Synchronisation disponible.";
+  alert("Connexion Supabase réussie.");
+ }catch(e){cloud=null;alert("Connexion impossible : "+e.message)}
+}
+async function syncCloud(){
+ if(!cloud){alert("Connectez d'abord Supabase.");return}
+ try{
+  const {data,error}=await cloud.from("app_state").select("data").eq("id","main").maybeSingle();
+  if(error)throw error;
+  if(data?.data){
+   if(confirm("Restaurer les données présentes en ligne sur cet appareil ?")){
+    db=data.data;persist();renderAll();
+   }
+  }else{
+   const {error:upError}=await cloud.from("app_state").upsert({id:"main",data:db,updated_at:new Date().toISOString()});
+   if(upError)throw upError;
+  }
+  const {error:saveError}=await cloud.from("app_state").upsert({id:"main",data:db,updated_at:new Date().toISOString()});
+  if(saveError)throw saveError;
+  document.getElementById("cloudStatus").textContent="Dernière synchronisation : "+new Date().toLocaleString("fr-MA");
+  alert("Synchronisation terminée.");
+ }catch(e){alert("Erreur de synchronisation : "+e.message)}
+}
+window.addEventListener("load",()=>{
+ const u=localStorage.getItem("pos_sb_url"),k=localStorage.getItem("pos_sb_key");
+ if(u&&k){document.getElementById("sbURL").value=u;document.getElementById("sbKEY").value=k}
+ init();
+});
 </script>
 </body>
 </html>
